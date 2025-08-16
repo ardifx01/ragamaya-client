@@ -8,7 +8,7 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
 import { useState } from "react";
-import { LoginModal } from "@/components/LoginModal"; // pastikan path sesuai
+import { LoginModal } from "@/components/LoginModal";
 
 interface NavItem {
   name: string;
@@ -38,8 +38,7 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
 
   const handleLogin = () => {
     console.log("Login dengan Google...");
-    // di sini nanti bisa hubungkan dengan Firebase Auth atau API login
-    setIsLoginOpen(false); // tutup modal setelah login berhasil
+    setIsLoginOpen(false);
   };
 
   return (
@@ -134,8 +133,6 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
           </MobileNavMenu>
         </div>
       </div>
-
-      {/* Modal Login */}
       <LoginModal
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}

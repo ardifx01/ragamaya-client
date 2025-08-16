@@ -1,43 +1,49 @@
+"use client"
+
 import MainNavbar from "@/components/Navbar";
-import { NavbarButton } from "@/components/ui/resizable-navbar";
+import LightRays from "@/components/ui/lightrays";
+import { Button, Image } from "@heroui/react";
+import { CameraIcon } from "@phosphor-icons/react";
 
 export default function NavbarDemo() {
-  const navItems = [
-    {
-      name: "Features",
-      link: "#features",
-    },
-    {
-      name: "Features",
-      link: "#features",
-    },
-    {
-      name: "Features",
-      link: "#features",
-    },
-  ];
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
 
-      <MainNavbar navItems={navItems} />
+    <div className="relative min-h-screen bg-gradient-to-br from-gray-800 via-black to-gray-900">
+      <div style={{ width: '100%', height: '600px', position: 'absolute' }}>
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="##b0c6d6"
+          raysSpeed={1.5}
+          lightSpread={0.8}
+          rayLength={1.2}
+          followMouse={true}
+          mouseInfluence={0.1}
+          noiseAmount={0.1}
+          distortion={0.05}
+          className="custom-rays"
+        />
+      </div>
 
-      <div className="flex min-h-screen items-center justify-center px-4 pt-20">
+      <MainNavbar />
+
+      <div className="flex items-center justify-center px-4 pt-52">
         <div className="text-center">
-          <h1 className="mb-6 text-6xl font-bold text-white">
-            Welcome to Our Platform
+          <h1 className="mb-6 text-6xl font-bold text-white leading-10">
+            Temukan Keindahan Budaya Batik
           </h1>
+          <h1 className="mb-6 text-6xl font-bold text-white">Indonesia</h1>
           <p className="mb-8 text-xl text-gray-300 max-w-2xl mx-auto">
-            Experience the power of our innovative solution.
-            Transform your workflow and achieve more.
+            Jelajahi pola batik tradisional dengan pengenalan AI, belanja desain digital, dan pelajari warisan budaya batik Indonesia.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
-            <NavbarButton variant="primary" href="#demo">
-              Get Started
-            </NavbarButton>
-            <NavbarButton variant="secondary" href="#learn">
-              Learn More
-            </NavbarButton>
+            <Button className="font-bold text-white bg-black border">
+              <CameraIcon size={20} />
+              Coba Pengenalan AI
+            </Button>
+            <Button className="font-bold">
+              Jelajahi Marketplace
+            </Button>
           </div>
         </div>
       </div>

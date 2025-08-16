@@ -28,7 +28,7 @@ export const LoginModal: FC<LoginModalProps> = ({
           <>
             <ModalHeader className="flex flex-col gap-1 text-center">
               <h2 className="text-2xl font-bold text-gray-800">
-                Masuk ke Ragamaya
+                Masuk ke RagaMaya
               </h2>
               <p className="text-sm text-gray-600">
                 Gunakan akun Google Anda untuk melanjutkan
@@ -67,7 +67,7 @@ export const LoginModal: FC<LoginModalProps> = ({
               </p>
               <Button
                 onPress={onClose}
-                className="bg-red-800 text-white font-semibold"
+                className="bg-gray-800 text-white font-semibold"
               >
                 Kembali
               </Button>

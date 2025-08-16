@@ -43,7 +43,7 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
 
   return (
     <>
-      <div className="sticky inset-x-0 top-10 z-40 w-full">
+      <div className="fixed inset-x-0 top-10 z-40 w-full">
         <Navbar>
           <NavBody>
             <NavbarLogo />

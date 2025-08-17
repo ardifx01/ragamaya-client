@@ -1,4 +1,4 @@
-import { useSmoothScroll } from '../../lib/hooks/useSmoothScroll';
+import { useSmoothScroll } from '../../hooks/useSmoothScroll';
 
 export default function SmoothScroll({ children }) {
   useSmoothScroll({

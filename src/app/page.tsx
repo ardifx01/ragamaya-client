@@ -1,13 +1,13 @@
 "use client"
 
-
 import Hero from "@/components/LandingPage/Hero";
 import LightRays from "@/components/ui/lightrays";
+import SmoothScroll from "@/components/SmoothScroll";
+import Fitur from "@/components/LandingPage/Fitur";
 
 export default function NavbarDemo() {
   return (
-    <div>
-
+    <SmoothScroll>
       <div style={{ width: '100%', height: '900px', position: 'absolute' }}>
         <LightRays
           raysOrigin="top-center"
@@ -23,14 +23,16 @@ export default function NavbarDemo() {
         />
       </div>
 
-      <Hero />
-
-      <div className="relative h-screen bg-gradient-to-b from-transparent to-blue-900/20 flex items-center justify-center">
-
-        <div className="text-center text-white">
-          <h2 className="text-4xl font-bold mb-4">Features Section</h2>
-        </div>
+      <div className="hero-section" data-speed="0.8">
+        <Hero />
       </div>
-    </div>
+
+      <Fitur />
+
+      <div className="h-screen">
+        <h1></h1>
+      </div>
+
+    </SmoothScroll>
   );
 }

@@ -1,10 +1,16 @@
 import { Button } from "@heroui/react"
-import { CameraIcon } from "@phosphor-icons/react"
+import { Camera } from "lucide-react";
 import { motion } from "motion/react";
+import { HoverBorderGradient } from "../ui/hover-border-gradient";
+import Link from "next/link";
 
 const Hero = () => {
+  const handleMarketplace = () => {
+    console.log("Marketplace clicked");
+  };
+
   return (
-    <div className="flex items-center justify-center px-4 md:pt-42 pt-52">
+    <div className="flex h-screen items-center justify-center px-4 md:pt-32">
       <div className="text-center">
         <div className="px-4 py-10 md:py-20">
           <h1 className="relative z-10 mx-auto max-w-7xl text-center text-3xl font-bold text-white md:text-4xl lg:text-7xl dark:text-slate-300 md:leading-23 leading-10">
@@ -54,12 +60,22 @@ const Hero = () => {
             }}
             className="relative z-10 mt-5 flex flex-wrap items-center justify-center gap-4"
           >
-            <div className="flex justify-center gap-4">
-              <Button className="font-bold text-white bg-black border">
-                <CameraIcon size={20} />
-                Coba Pengenalan AI
-              </Button>
-              <Button className="font-bold text-black bg-white">
+            <div className="flex justify-center gap-4 items-center">
+              <Link href="#">
+                <HoverBorderGradient
+                  containerClassName="rounded-lg"
+                  as="button"
+                  className="bg-black text-white flex items-center space-x-2 border cursor-pointer"
+                >
+                  <Camera size={20} />
+                  <span className="font-bold md:text-base text-sm">Pengenalan AI</span>
+                </HoverBorderGradient>
+              </Link>
+
+              <Button
+                className="font-bold text-black bg-white py-5"
+                onPress={handleMarketplace}
+              >
                 Jelajahi Marketplace
               </Button>
             </div>

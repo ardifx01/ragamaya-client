@@ -10,10 +10,10 @@ const Hero = () => {
   };
 
   return (
-    <div className="flex items-center justify-center px-4 md:pt-32">
-      <div className="text-center">
-        <div className="px-4 py-10 md:py-20">
-          <h1 className="relative z-10 mx-auto max-w-7xl text-center text-3xl font-bold text-white md:text-4xl lg:text-7xl dark:text-slate-300 md:leading-23 leading-10">
+    <div className="flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8 md:pt-32">
+      <div className="text-center w-full max-w-7xl mx-auto">
+        <div className="px-4 py-10 sm:py-12 md:py-20">
+          <h1 className="relative z-10 mx-auto max-w-7xl text-center text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold text-white dark:text-slate-300 leading-tight sm:leading-tight md:leading-tight lg:leading-tight">
             {"Temukan Keindahan Budaya Batik Indonesia"
               .split(" ")
               .map((word, index) => (
@@ -43,7 +43,7 @@ const Hero = () => {
               duration: 0.3,
               delay: 0.8,
             }}
-            className="relative z-10 mx-auto max-w-xl py-4 text-center text-sm md:text-lg font-normal text-gray-300"
+            className="relative z-10 mx-auto max-w-xl py-4 text-center text-sm sm:text-base md:text-lg lg:text-xl font-normal text-gray-300 px-2"
           >
             Jelajahi pola batik tradisional dengan pengenalan berbasis AI, belanja desain digital, dan pelajari warisan budaya batik Indonesia.
           </motion.p>
@@ -58,27 +58,25 @@ const Hero = () => {
               duration: 0.3,
               delay: 1,
             }}
-            className="relative z-10 mt-5 flex flex-wrap items-center justify-center gap-4"
+            className="relative z-10 mt-5 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-2"
           >
-            <div className="flex justify-center gap-4 items-center">
-              <Link href="#">
-                <HoverBorderGradient
-                  containerClassName="rounded-lg"
-                  as="button"
-                  className="bg-black text-white flex items-center space-x-2 border cursor-pointer"
-                >
-                  <Camera size={20} />
-                  <span className="font-bold md:text-base text-sm">Pengenalan AI</span>
-                </HoverBorderGradient>
-              </Link>
-
-              <Button
-                className="font-bold text-black bg-white py-5"
-                onPress={handleMarketplace}
+            <Link href="#" className="w-full sm:w-auto">
+              <HoverBorderGradient
+                containerClassName="rounded-lg w-full sm:w-auto"
+                as="button"
+                className="bg-black text-white flex items-center justify-center space-x-2 border cursor-pointer w-full sm:w-auto px-4 py-2"
               >
-                Jelajahi Marketplace
-              </Button>
-            </div>
+                <Camera size={18} className="sm:w-5 sm:h-5" />
+                <span className="font-bold text-sm sm:text-base">Pengenalan AI</span>
+              </HoverBorderGradient>
+            </Link>
+
+            <Button
+              className="font-bold text-black bg-white py-2 px-4 sm:py-3 sm:px-6 text-sm sm:text-base w-full sm:w-auto"
+              onPress={handleMarketplace}
+            >
+              Jelajahi Marketplace
+            </Button>
           </motion.div>
         </div>
       </div>

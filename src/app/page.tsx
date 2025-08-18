@@ -23,9 +23,8 @@ export default function NavbarDemo() {
         />
       </div>
 
-      <div className="hero-section" data-speed="0.8">
-        <Hero />
-      </div>
+      <Hero />
+
 
       <Fitur />
 

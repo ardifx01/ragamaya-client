@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react"
 import Image from "next/image"
+import Link from "next/link"
 
 import React, { useRef, useState } from "react"
 
@@ -116,7 +117,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
       )}
     >
       {items.map((item, idx) => (
-        <a
+        <Link
           onMouseEnter={() => setHovered(idx)}
           onClick={onItemClick}
           className="relative px-4 py-2 text-white/80 hover:text-white"
@@ -130,7 +131,7 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
             />
           )}
           <span className="relative z-20">{item.name}</span>
-        </a>
+        </Link>
       ))}
     </motion.div>
   )
@@ -194,10 +195,10 @@ export const MobileNavMenu = ({ children, className, isOpen,  }: MobileNavMenuPr
 
 export const NavbarLogo = () => {
   return (
-    <a href="#" className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-white">
+    <Link href="/" className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-white">
       <Image src="/assets/logo.png" alt="Logo RagaMaya" width={30} height={30} />
       <span className="font-medium text-white">RagaMaya</span>
-    </a>
+    </Link>
   )
 }
 

@@ -10,7 +10,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center px-4 md:pt-32">
+    <div className="flex items-center justify-center px-4 md:pt-32">
       <div className="text-center">
         <div className="px-4 py-10 md:py-20">
           <h1 className="relative z-10 mx-auto max-w-7xl text-center text-3xl font-bold text-white md:text-4xl lg:text-7xl dark:text-slate-300 md:leading-23 leading-10">

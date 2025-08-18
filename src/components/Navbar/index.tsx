@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/resizable-navbar";
 import { useState } from "react";
 import { LoginModal } from "@/components/LoginModal";
+import Link from "next/link";
 
 interface NavItem {
   name: string;
@@ -28,7 +29,7 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
   };
 
   const defaultNavItems = [
-    { name: "Tentang", link: "#" },
+    { name: "Tentang", link: "/" },
     { name: "Pengenalan AI", link: "/deteksi" },
     { name: "Edukasi", link: "/edukasi" },
     { name: "Marketplace", link: "/marketplace" },
@@ -110,14 +111,14 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
             onClose={() => setIsMobileMenuOpen(false)}
           >
             {menuItems.map((item, idx) => (
-              <a
+              <Link
                 key={`mobile-link-${idx}`}
                 href={item.link}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="relative text-gray-300 hover:text-white transition-colors duration-200 py-2"
               >
                 <span className="block">{item.name}</span>
-              </a>
+              </Link>
             ))}
             <div className="flex w-full flex-col gap-3 pt-4 border-t border-gray-700">
               <NavbarButton

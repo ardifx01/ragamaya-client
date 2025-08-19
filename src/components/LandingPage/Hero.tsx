@@ -72,7 +72,7 @@ const Hero = () => {
             </Link>
 
             <Button as={Link} href="/marketplace"
-              className="font-bold text-black bg-white py-2 px-4 sm:py-3 sm:px-6 text-sm sm:text-base w-full sm:w-auto"
+              className="font-bold text-black bg-white text-sm sm:text-base w-full sm:w-auto"
               onPress={handleMarketplace}
             >
               Jelajahi Marketplace

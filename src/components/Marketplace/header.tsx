@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 
 export const categories = [
+    { key: "semua", label: "Semua" },
     { key: "batik-tulis", label: "Batik Tulis" },
     { key: "batik-cap", label: "Batik Cap" },
     { key: "batik-printing", label: "Batik Printing" },
@@ -24,10 +25,10 @@ export const priceRanges = [
 
 const Header = () => {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-gray-900 px-4 pt-28">
+        <div className=" px-4 pt-28">
             <div className="max-w-7xl w-full mx-auto">
                 <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 pt-8 lg:pt-16">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -52,17 +53,17 @@ const Header = () => {
                                     </motion.span>
                                 ))}
                         </h1>
-                        <motion.p 
+                        <motion.p
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.6, ease: "easeOut" }}
                             className="text-gray-400 text-base md:text-lg"
                         >
-                            Temukan batik tradisional Indonesia untuk kebutuhan kamu
+                            Temukan motif batik autentik Indonesia dengan kualitas terbaik untuk kebutuhan desain Anda
                         </motion.p>
                     </motion.div>
-                    
-                    <motion.div 
+
+                    <motion.div
                         initial={{ opacity: 0, x: 50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
@@ -81,14 +82,14 @@ const Header = () => {
                     </motion.div>
                 </div>
 
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 50, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
                     className="bg-black w-full mt-10 rounded-xl border-2 border-gray-500 text-white"
                 >
                     <div className="p-4 md:p-5 w-full">
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5, delay: 1.1 }}
@@ -103,9 +104,9 @@ const Header = () => {
                             </motion.div>
                             <h1 className="text-lg font-medium">Filter</h1>
                         </motion.div>
-                        
+
                         <div className="flex flex-col lg:flex-row gap-4">
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: 1.3, ease: "easeOut" }}
@@ -123,8 +124,8 @@ const Header = () => {
                                     }}
                                 />
                             </motion.div>
-                            
-                            <motion.div 
+
+                            <motion.div
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: 1.4, ease: "easeOut" }}
@@ -154,8 +155,8 @@ const Header = () => {
                                     ))}
                                 </Select>
                             </motion.div>
-                            
-                            <motion.div 
+
+                            <motion.div
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: 1.5, ease: "easeOut" }}

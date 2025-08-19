@@ -5,7 +5,7 @@ import Product from "@/components/Marketplace/product";
 
 const Marketplace = () => {
     return (
-        <div>
+        <div className="bg-gradient-to-br from-gray-800 via-black to-gray-900">
             <Header/>
             <Product/>
         </div>

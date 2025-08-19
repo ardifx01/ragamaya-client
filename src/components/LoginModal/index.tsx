@@ -1,4 +1,7 @@
+import { BASE_API } from "@/lib/environtment";
+import { TokensType } from "@/types/tokens_type";
 import {
+  addToast,
   Button,
   Image,
   Modal,
@@ -7,20 +10,69 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@heroui/react";
+import { useGoogleLogin } from "@react-oauth/google";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useState } from "react";
+
+import Cookies from "js-cookie";
+import { ResponseType } from "@/types/response_type";
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  handleLogin: () => void;
 }
 
 export const LoginModal: FC<LoginModalProps> = ({
   isOpen,
   onClose,
-  handleLogin,
 }) => {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setIsLoading(true);
+        const res = await fetch(BASE_API + "/user/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ access_token: tokenResponse.access_token }),
+        })
+        if (res.ok) {
+          const { body }: { body?: TokensType } = await res.json() as ResponseType;
+          if (!body) {
+            addToast({
+              title: "Login failed.",
+              description: "Something went wrong, please try again.",
+              color: "danger"
+            });
+            return;
+          }
+          Cookies.set("access_token", body.access_token, {
+            expires: 7 / 24,
+          });
+          Cookies.set("refresh_token", body.refresh_token, {
+            expires: 7,
+          });
+          window.location.reload();
+          onClose()
+        }
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    onError: () => {
+      addToast({
+        title: "Google login failed.",
+        description: "Please try again later.",
+        color: "danger"
+      });
+    }
+  });
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} placement="center" backdrop="blur">
       <ModalContent>
@@ -47,7 +99,8 @@ export const LoginModal: FC<LoginModalProps> = ({
                     className="mr-2"
                   />
                 }
-                onPress={handleLogin}
+                onPress={() => handleLogin()}
+                isLoading={isLoading}
               >
                 Masuk dengan Google
               </Button>

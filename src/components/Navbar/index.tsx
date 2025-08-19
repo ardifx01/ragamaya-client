@@ -38,11 +38,6 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
 
   const menuItems = navItems.length > 0 ? navItems : defaultNavItems;
 
-  const handleLogin = () => {
-    console.log("Login dengan Google...");
-    setIsLoginOpen(false);
-  };
-
   return (
     <>
       <div className="fixed inset-x-0 top-10 z-40 w-full">
@@ -138,7 +133,6 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
       <LoginModal
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
-        handleLogin={handleLogin}
       />
     </>
   );

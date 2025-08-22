@@ -25,7 +25,7 @@ export const priceRanges = [
 
 const Header = () => {
     return (
-        <div className=" px-4 pt-28">
+        <div className="px-4 pt-28">
             <div className="max-w-7xl w-full mx-auto">
                 <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 pt-8 lg:pt-16">
                     <motion.div

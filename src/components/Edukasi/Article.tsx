@@ -166,14 +166,14 @@ const Article: React.FC<ArticleProps> = ({ selectedLevel, setSelectedLevel }) =>
                   
                   <motion.h3
                     variants={itemVariants}
-                    className="text-xl font-bold mb-2 line-clamp-2 min-h-[3.5rem]"
+                    className="text-xl font-bold line-clamp-2 mb-3"
                   >
                     {article.title}
                   </motion.h3>
 
                   <motion.p
                     variants={itemVariants}
-                    className="text-gray-400 text-sm mb-4 line-clamp-3 flex-grow min-h-[4.5rem]"
+                    className="text-gray-400 text-sm mb-10 line-clamp-3 flex-grow"
                   >
                     {article.description}
                   </motion.p>

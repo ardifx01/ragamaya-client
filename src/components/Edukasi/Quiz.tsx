@@ -126,7 +126,7 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
             transition={{ delay: index * 0.2 }}
             className="h-full"
           >
-            <Card className="bg-black border border-gray-700 hover:border-gray-500 transition-all duration-200 h-full">
+            <Card className="bg-black border-2 border-gray-700 hover:border-gray-500 transition-all duration-200 h-full">
               <CardBody className="p-6 text-white flex flex-col h-full">
                 <motion.div variants={itemVariants} className="flex flex-wrap gap-2 mb-4">
                   {quiz.tags.map((tag) => (
@@ -149,13 +149,13 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
                 </motion.div>
                 <motion.h3
                   variants={itemVariants}
-                  className="text-xl font-semibold mb-3 min-h-[3.5rem] line-clamp-2"
+                  className="text-xl font-semibold mb-3 line-clamp-2"
                 >
                   {quiz.title}
                 </motion.h3>
                 <motion.p
                   variants={itemVariants}
-                  className="text-gray-400 text-sm mb-6 flex-grow min-h-[3rem] line-clamp-3"
+                  className="text-gray-400 text-sm mb-8 flex-grow line-clamp-3"
                 >
                   {quiz.description}
                 </motion.p>

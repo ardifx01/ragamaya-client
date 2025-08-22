@@ -147,7 +147,7 @@ const Product = () => {
                                         as="button"
                                         className="bg-gray-800 text-white cursor-pointer px-4 py-2 hover:bg-gray-700 transition-colors duration-200"
                                         onClick={(e) => {
-                                            e.stopPropagation();y
+                                            e.stopPropagation();
                                             console.log(`Buy license for ${product.name}`);
                                         }}
                                     >
@@ -158,6 +158,7 @@ const Product = () => {
                         </motion.div>
                     ))}
                 </div>
+                <h1 className="text-white text-2xl pt-12 flex justify-center">Pagination</h1>
             </div>
         </div>
     )

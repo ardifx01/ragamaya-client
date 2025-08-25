@@ -78,9 +78,9 @@ const Product = () => {
     };
 
     return (
-        <div className="mt-12">
+        <div className="mt-12 pb-20">
             <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:px-0 px-4">
                     {products.map((product, index) => (
                         <motion.div
                             key={product.id}
@@ -120,7 +120,7 @@ const Product = () => {
                             <div className="p-4 pt-0 text-white">
                                 <div className="flex justify-between items-start mb-3">
                                     <h3 className="text-xl font-bold">{product.name}</h3>
-                                    <span className="bg-red-800 text-white text-xs px-2 py-1 rounded-full">
+                                    <span className="bg-gray-800 text-white text-xs px-3 py-1 rounded-full">
                                         {product.category}
                                     </span>
                                 </div>
@@ -147,7 +147,7 @@ const Product = () => {
                                         as="button"
                                         className="bg-gray-800 text-white cursor-pointer px-4 py-2 hover:bg-gray-700 transition-colors duration-200"
                                         onClick={(e) => {
-                                            e.stopPropagation();y
+                                            e.stopPropagation();
                                             console.log(`Buy license for ${product.name}`);
                                         }}
                                     >
@@ -158,6 +158,7 @@ const Product = () => {
                         </motion.div>
                     ))}
                 </div>
+                <h1 className="text-white text-2xl pt-12 flex justify-center">Pagination</h1>
             </div>
         </div>
     )

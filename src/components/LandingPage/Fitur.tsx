@@ -1,3 +1,5 @@
+"use client"
+
 import { BookOpenText, Brain, MessageSquare, ShoppingBag } from "lucide-react";
 import CardSwap, { Card } from "../ui/card-swap";
 import { Image } from "@heroui/react";

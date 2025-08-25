@@ -182,7 +182,7 @@ export const MobileNavMenu = ({ children, className, isOpen,  }: MobileNavMenuPr
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
           className={cn(
-            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-large border border-white/10 bg-black px-4 py-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4),_0_2px_8px_rgba(0,0,0,0.2),_0_0_0_1px_rgba(255,255,255,0.08),_inset_0_1px_0_rgba(255,255,255,0.1)]",
+            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-large border border-white/20 bg-black px-4 py-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4),_0_2px_8px_rgba(0,0,0,0.2),_0_0_0_1px_rgba(255,255,255,0.08),_inset_0_1px_0_rgba(255,255,255,0.1)]",
             className,
           )}
         >

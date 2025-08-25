@@ -13,20 +13,21 @@ import {
 import { useGoogleLogin } from "@react-oauth/google";
 import Link from "next/link";
 import { FC, useState } from "react";
-
 import Cookies from "js-cookie";
 import { ResponseType } from "@/types/response_type";
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onLoginSuccess?: () => void;
 }
 
 export const LoginModal: FC<LoginModalProps> = ({
   isOpen,
   onClose,
+  onLoginSuccess,
 }) => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -38,7 +39,8 @@ export const LoginModal: FC<LoginModalProps> = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ access_token: tokenResponse.access_token }),
-        })
+        });
+
         if (res.ok) {
           const { body }: { body?: TokensType } = await res.json() as ResponseType;
           if (!body) {
@@ -49,25 +51,50 @@ export const LoginModal: FC<LoginModalProps> = ({
             });
             return;
           }
+
           Cookies.set("access_token", body.access_token, {
             expires: 7 / 24,
           });
           Cookies.set("refresh_token", body.refresh_token, {
             expires: 7,
           });
-          window.location.reload();
-          onClose()
+
+          if (onLoginSuccess) {
+            onLoginSuccess();
+          }
+
+          onClose();
+
+          addToast({
+            title: "Login berhasil!",
+            description: "Selamat datang di RagaMaya.",
+            color: "success"
+          });
+
+        } else {
+          const errorData = await res.json();
+          addToast({
+            title: "Login gagal.",
+            description: errorData.message || "Terjadi kesalahan, silakan coba lagi.",
+            color: "danger"
+          });
         }
       } catch (err) {
-        console.error(err)
+        console.error("Login error:", err);
+        addToast({
+          title: "Login gagal.",
+          description: "Terjadi kesalahan jaringan, silakan coba lagi.",
+          color: "danger"
+        });
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Google OAuth error:", error);
       addToast({
-        title: "Google login failed.",
-        description: "Please try again later.",
+        title: "Google login gagal.",
+        description: "Silakan coba lagi nanti.",
         color: "danger"
       });
     }
@@ -101,8 +128,9 @@ export const LoginModal: FC<LoginModalProps> = ({
                 }
                 onPress={() => handleLogin()}
                 isLoading={isLoading}
+                disabled={isLoading}
               >
-                Masuk dengan Google
+                {isLoading ? "Masuk..." : "Masuk dengan Google"}
               </Button>
             </ModalBody>
 
@@ -121,6 +149,7 @@ export const LoginModal: FC<LoginModalProps> = ({
               <Button
                 onPress={onClose}
                 className="bg-gray-800 text-white font-semibold"
+                disabled={isLoading}
               >
                 Kembali
               </Button>

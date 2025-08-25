@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@heroui/react"
 import { Camera } from "lucide-react";
 import { motion } from "motion/react";

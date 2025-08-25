@@ -2,12 +2,12 @@
 
 import Hero from "@/components/LandingPage/Hero";
 import LightRays from "@/components/ui/lightrays";
-import SmoothScroll from "@/components/SmoothScroll";
 import Fitur from "@/components/LandingPage/Fitur";
 
 export default function NavbarDemo() {
   return (
-    <SmoothScroll>
+    <div>
+
       <div style={{ width: '100%', height: '900px', position: 'absolute' }}>
         <LightRays
           raysOrigin="top-center"
@@ -25,13 +25,11 @@ export default function NavbarDemo() {
 
       <Hero />
 
-
       <Fitur />
 
       <div className="h-screen">
         <h1></h1>
       </div>
-
-    </SmoothScroll>
+    </div>
   );
 }

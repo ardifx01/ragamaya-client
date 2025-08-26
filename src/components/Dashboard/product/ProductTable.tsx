@@ -8,7 +8,7 @@ import {
     createColumnHelper,
 } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight, Loader2, Search } from 'lucide-react';
-import {Button, Image, useDisclosure} from '@heroui/react';
+import {addToast, Button, Image, useDisclosure} from '@heroui/react';
 import {IconCancel, IconEdit, IconTrash} from "@tabler/icons-react";
 import RequestAPI from '@/helper/http';
 import MyModal from "@/components/ui/modal/MyModal";
@@ -171,6 +171,11 @@ const ProductTable: React.FC = () => {
             setTotalPages(Math.ceil(totalData / pageSize));
 
         } catch (error) {
+            addToast({
+                title: 'Error',
+                description: 'Error ketika load data.',
+                color: 'danger',
+            })
             console.error('Error in loadData:', error);
             setOriginalData([]);
             setTotalPages(0);
@@ -202,15 +207,30 @@ const ProductTable: React.FC = () => {
             const response = await RequestAPI('/product/delete/' + deleteProductID, 'delete');
 
             if (response.status === 200) {
+                addToast({
+                    title: 'Success',
+                    description: 'Berhasil Menghapus Produk',
+                    color: 'success',
+                })
                 setLoading(false)
                 deleteModal.onClose()
                 await loadData(currentPage)
             } else {
+                addToast({
+                    title: 'Error',
+                    description: response.message,
+                    color: 'danger',
+                })
                 throw new Error(response.message || 'Gagal menghapus produk');
             }
 
             setLoading(false);
         } catch (error: any) {
+            addToast({
+                title: 'Error',
+                description: error.message,
+                color: 'danger',
+            })
             console.error('Submit error:', error);
             alert(error.message || 'Terjadi kesalahan saat menghapus produk');
         }

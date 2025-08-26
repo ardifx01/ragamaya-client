@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Input, Button, Textarea, Card, CardBody } from '@heroui/react';
+import {Input, Button, Textarea, Card, CardBody, addToast} from '@heroui/react';
 import { FilePond, registerPlugin } from 'react-filepond';
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
@@ -114,6 +114,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
             const response = await RequestAPI('/product/register', 'post', productData);
 
             if (response.status === 200) {
+                addToast({
+                    title: 'Success',
+                    description: 'Berhasil Menambahkan Produk',
+                    color: 'success',
+                })
                 reset();
                 setUploadedThumbnails([]);
                 setUploadedDigitalFiles([]);
@@ -122,9 +127,19 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                 onClose()
                 onSubmitSuccess?.();
             } else {
+                addToast({
+                    title: 'Error',
+                    description: response.message,
+                    color: 'danger',
+                })
                 throw new Error(response.message || 'Gagal membuat produk');
             }
         } catch (error: any) {
+            addToast({
+                title: 'Error',
+                description: 'Gagal menambahkan produk',
+                color: 'danger',
+            })
             console.error('Submit error:', error);
             alert(error.message || 'Terjadi kesalahan saat menyimpan produk');
         }

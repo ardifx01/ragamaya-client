@@ -45,7 +45,7 @@ const Hero = () => {
               duration: 0.3,
               delay: 0.8,
             }}
-            className="relative z-10 mx-auto max-w-xl py-4 text-center text-sm sm:text-base md:text-lg lg:text-xl font-normal text-gray-300 px-2"
+            className="relative z-10 mx-auto max-w-xl py-4 text-center text-xs sm:text-base md:text-lg lg:text-xl font-normal text-gray-300 px-2"
           >
             Jelajahi pola batik tradisional dengan pengenalan berbasis AI, belanja desain digital, dan pelajari warisan budaya batik Indonesia.
           </motion.p>

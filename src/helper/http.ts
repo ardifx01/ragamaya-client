@@ -15,7 +15,10 @@ const RequestAPI = async (path: string, method: "get" | "post" | "delete", body?
         };
         // GET request tidak butuh Content-Type atau X-HTTP-Method-Override
         if (!isGetMethod) {
-            headers['Content-Type'] = 'multipart/form-data';
+            // Memberitahu server bahwa body yang dikirim adalah format JSON
+            headers['Content-Type'] = 'application/json';
+
+            // Header ini tetap bisa digunakan jika server Anda membutuhkannya
             headers['X-HTTP-Method-Override'] = overrideToPatchMethod ? 'PATCH' : method.toUpperCase();
         }
 

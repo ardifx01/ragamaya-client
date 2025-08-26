@@ -17,6 +17,7 @@ import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import RequestAPI from '@/helper/http';
 import Cookies from "js-cookie";
+import {ProcessServerConfigFunction, ServerUrl} from 'filepond';
 
 // Register the plugins
 registerPlugin(
@@ -52,11 +53,11 @@ interface AddProductModalProps {
 const productSchema = z.object({
     name: z.string().min(3, "Nama produk minimal 3 karakter"),
     description: z.string().min(10, "Deskripsi minimal 10 karakter"),
-    price: z.preprocess((val) => {
+    price: z.preprocess((val: number) => {
         if (typeof val === 'string') return parseFloat(val);
         return val;
     }, z.number().min(1, "Harga harus diisi")),
-    stock: z.preprocess((val) => {
+    stock: z.preprocess((val: number) => {
         if (typeof val === 'string') return parseInt(val);
         return val;
     }, z.number().min(0, "Stok tidak boleh negatif")),
@@ -135,7 +136,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
             headers: {
                 Authorization: `Bearer ${Cookies.get("access_token")}`,
             },
-            onload: (response: any): string | null => {
+            onload: (response: any): string | ServerUrl | ProcessServerConfigFunction | null | undefined => {
                 try {
                     const res = JSON.parse(response);
                     if (res.status === 200 && res.body && res.body.length > 0) {

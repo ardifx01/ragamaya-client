@@ -69,13 +69,14 @@ const Header = () => {
                         transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
                         className="flex justify-center lg:justify-end"
                     >
-                        <Link href="#">
+                        <Link href="#" aria-label="Menjadi penjual batik">
                             <HoverBorderGradient
                                 containerClassName="rounded-lg"
                                 as="button"
                                 className="bg-black text-white flex items-center space-x-2 border cursor-pointer px-6 py-3"
+                                aria-label="Tombol untuk menjadi penjual"
                             >
-                                <Store size={20} className="md:w-6 md:h-6" />
+                                <Store size={20} className="md:w-6 md:h-6" aria-hidden="true" />
                                 <span className="font-bold text-sm md:text-lg">Jadilah Penjual</span>
                             </HoverBorderGradient>
                         </Link>
@@ -87,6 +88,8 @@ const Header = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
                     className="bg-black w-full mt-10 rounded-xl border-2 border-gray-500 text-white"
+                    role="search"
+                    aria-label="Panel pencarian dan filter produk batik"
                 >
                     <div className="p-4 md:p-5 w-full">
                         <motion.div
@@ -100,9 +103,9 @@ const Header = () => {
                                 animate={{ rotate: 0, opacity: 1 }}
                                 transition={{ duration: 0.6, delay: 1.2, ease: "easeOut" }}
                             >
-                                <Funnel size={20} />
+                                <Funnel size={20} aria-hidden="true" />
                             </motion.div>
-                            <h1 className="text-lg font-medium">Filter</h1>
+                            <h2 className="text-lg font-medium">Filter</h2>
                         </motion.div>
 
                         <div className="flex flex-col lg:flex-row gap-4">
@@ -115,9 +118,10 @@ const Header = () => {
                                 <Input
                                     type="text"
                                     placeholder="Cari motif atau jenis batik..."
-                                    startContent={<Search size={20} className="text-gray-400" />}
+                                    startContent={<Search size={20} className="text-gray-400" aria-hidden="true" />}
                                     variant="bordered"
                                     size="lg"
+                                    aria-label="Pencarian motif atau jenis batik"
                                     classNames={{
                                         inputWrapper: "border-2 border-gray-600 bg-transparent transition-all duration-300 hover:border-gray-400 focus-within:border-white",
                                         input: "text-white placeholder:text-gray-300",
@@ -136,7 +140,8 @@ const Header = () => {
                                     size="lg"
                                     placeholder="Pilih kategori"
                                     variant="bordered"
-                                    selectorIcon={<ChevronDown size={20} className="text-gray-400" />}
+                                    aria-label="Pilih kategori batik"
+                                    selectorIcon={<ChevronDown size={20} className="text-gray-400" aria-hidden="true" />}
                                     classNames={{
                                         trigger: "border-2 border-gray-600 bg-transparent transition-all duration-300 hover:border-gray-400 data-[open=true]:border-white",
                                         value: "text-white !text-white",
@@ -167,7 +172,8 @@ const Header = () => {
                                     size="lg"
                                     placeholder="Pilih rentang harga"
                                     variant="bordered"
-                                    selectorIcon={<ChevronDown size={20} className="text-gray-400" />}
+                                    aria-label="Pilih rentang harga batik"
+                                    selectorIcon={<ChevronDown size={20} className="text-gray-400" aria-hidden="true" />}
                                     classNames={{
                                         trigger: "border-2 border-gray-600 bg-transparent transition-all duration-300 hover:border-gray-400 data-[open=true]:border-white",
                                         value: "text-white !text-white",

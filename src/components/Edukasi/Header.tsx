@@ -5,7 +5,7 @@
 
     const Header = () => {
         return (
-            <div className="max-w-7xl mx-auto pt-13 pb-10">
+            <div className="max-w-7xl mx-auto pt-13 pb-10 ">
                 <motion.div
                     initial={{ opacity: 0, x: -0 }}
                     animate={{ opacity: 1, x: 0 }}

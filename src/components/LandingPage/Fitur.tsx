@@ -36,7 +36,6 @@ const Fitur = () => {
         <div className="relative">
             <div className="pt-52 pb-12">
                 <div className="max-w-6xl w-full mx-auto px-4">
-                    {/* Desktop Layout - Horizontal */}
                     <div className="hidden md:flex items-center justify-between gap-8">
                         <div className="flex-1 space-y-5">
                             <h1 className="text-6xl font-bold text-white">
@@ -75,8 +74,6 @@ const Fitur = () => {
                             </CardSwap>
                         </div>
                     </div>
-
-                    {/* Mobile Layout - Vertical */}
                     <div className="md:hidden">
                         <div className="text-center space-y-5 mb-8">
                             <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight">
@@ -86,8 +83,6 @@ const Fitur = () => {
                                 Fitur-fitur yang ada pada RagaMaya
                             </p>
                         </div>
-                        
-                        {/* Mobile Card Container - Improved */}
                         <div className="flex justify-center items-center min-h-[700px] px-4">
                             <div className="relative w-full max-w-[320px]" style={{ height: '400px' }}>
                                 <CardSwap

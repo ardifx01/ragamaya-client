@@ -29,11 +29,11 @@ export const useSidebar = () => {
 };
 
 export const SidebarProvider = ({
-                                    children,
-                                    open: openProp,
-                                    setOpen: setOpenProp,
-                                    animate = true,
-                                }: {
+    children,
+    open: openProp,
+    setOpen: setOpenProp,
+    animate = true,
+}: {
     children: React.ReactNode;
     open?: boolean;
     setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -51,12 +51,12 @@ export const SidebarProvider = ({
     );
 };
 
-export const Sidebar = ({
-                            children,
-                            open,
-                            setOpen,
-                            animate,
-                        }: {
+export const SidebarLayout = ({
+    children,
+    open,
+    setOpen,
+    animate,
+}: {
     children: React.ReactNode;
     open?: boolean;
     setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -79,10 +79,10 @@ export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
 };
 
 export const DesktopSidebar = ({
-                                   className,
-                                   children,
-                                   ...props
-                               }: React.ComponentProps<typeof motion.div>) => {
+   className,
+   children,
+   ...props
+}: React.ComponentProps<typeof motion.div>) => {
     const { open, setOpen, animate } = useSidebar();
     return (
         <>
@@ -92,7 +92,7 @@ export const DesktopSidebar = ({
                     className
                 )}
                 animate={{
-                    width: animate ? (open ? "300px" : "60px") : "300px",
+                    width: animate ? (open ? "250px" : "68px") : "250px",
                 }}
                 onMouseEnter={() => setOpen(true)}
                 onMouseLeave={() => setOpen(false)}
@@ -105,10 +105,10 @@ export const DesktopSidebar = ({
 };
 
 export const MobileSidebar = ({
-                                  className,
-                                  children,
-                                  ...props
-                              }: React.ComponentProps<"div">) => {
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">) => {
     const { open, setOpen } = useSidebar();
     return (
         <>
@@ -155,10 +155,10 @@ export const MobileSidebar = ({
 };
 
 export const SidebarLink = ({
-                                link,
-                                className,
-                                ...props
-                            }: {
+    link,
+    className,
+    ...props
+}: {
     link: Links;
     className?: string;
 }) => {

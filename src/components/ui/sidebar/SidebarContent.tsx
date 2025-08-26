@@ -3,6 +3,7 @@ import React from "react";
 import { IconUserBolt } from "@tabler/icons-react";
 import { SidebarLayout, SidebarBody, SidebarLink } from "@/components/ui/sidebar/SidebarLayout";
 import { cn } from "@/lib/utils";
+import {GetUserData} from "@/lib/GetUserData";
 
 interface Link {
     label: string;
@@ -18,6 +19,8 @@ interface SidebarProps {
 }
 
 const SidebarContent: React.FC<SidebarProps> = ({ open, setOpen, activeLink, links }) => {
+    const userData = GetUserData();
+
     return (
         <SidebarLayout open={open} setOpen={setOpen}>
             <SidebarBody className="justify-between gap-10">
@@ -61,8 +64,7 @@ const SidebarContent: React.FC<SidebarProps> = ({ open, setOpen, activeLink, lin
                         </div>
                         {open && (
                             <div className="flex-1">
-                                <div className="text-sm font-medium text-white">Admin User</div>
-                                <div className="text-xs text-gray-400">admin@ragamaya.com</div>
+                                <div className="text-sm font-medium text-white">{userData.name}</div>
                             </div>
                         )}
                     </div>

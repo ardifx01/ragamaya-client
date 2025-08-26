@@ -8,11 +8,12 @@ import {
     createColumnHelper,
 } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight, Loader2, Search } from 'lucide-react';
-import {Button, Form, Image, Input, useDisclosure} from '@heroui/react';
-import { IconEdit, IconTrash } from "@tabler/icons-react";
+import {Button, Image, useDisclosure} from '@heroui/react';
+import {IconCancel, IconEdit, IconTrash} from "@tabler/icons-react";
 import RequestAPI from '@/helper/http';
 import MyModal from "@/components/ui/modal/MyModal";
 import AddProductModal from "@/components/Dashboard/product/AddModal";
+import {GetUserData} from "@/lib/GetUserData";
 
 // --- PENYESUAIAN INTERFACE ---
 interface Thumbnail { thumbnail_url: string; }
@@ -41,8 +42,9 @@ interface ApiResponse {
 
 // PENYESUAIAN: fetchData tetap sama, hanya endpoint yang dipanggil
 const fetchData = async (page: number = 1, pageSize: number = 10): Promise<ApiResponse> => {
+    const userData = GetUserData()
     console.log(`Fetching real data for page: ${page}`);
-    const params = { page, page_size: pageSize };
+    const params = { page, page_size: pageSize, seller_uuid: userData.seller_profile?.uuid};
     try {
         return await RequestAPI('/product/search', 'get', params);
     } catch (error) {
@@ -67,6 +69,10 @@ const ProductTable: React.FC = () => {
 
     // ModalSetting
     const addModal = useDisclosure()
+    const deleteModal = useDisclosure()
+
+    // Get ID's
+    const [deleteProductID, setDeleteProductID] = useState<string>('')
 
     // useEffect untuk filter client-side (tidak berubah)
     useEffect(() => {
@@ -128,13 +134,24 @@ const ProductTable: React.FC = () => {
                 </div>
             )
         }),
-        columnHelper.display({
+        columnHelper.accessor(row => ({ ID: row.uuid }), {
             id: 'actions',
             header: () => <div className="text-right">Aksi</div>,
-            cell: () => (
+            cell: (info) => (
                 <div className="text-right flex justify-end gap-2">
                     <Button color="warning" variant="ghost" size="sm" isIconOnly><IconEdit size={18} /></Button>
-                    <Button color="danger" variant="ghost" size="sm" isIconOnly><IconTrash size={18} /></Button>
+                    <Button
+                        onPress={() => {
+                            setDeleteProductID(info.getValue().ID);
+                            deleteModal.onOpen()
+                        }}
+                        color="danger"
+                        variant="ghost"
+                        size="sm"
+                        isIconOnly
+                    >
+                        <IconTrash size={18} />
+                    </Button>
                 </div>
             )
         })
@@ -178,6 +195,30 @@ const ProductTable: React.FC = () => {
             setCurrentPage(prev => prev - 1);
         }
     };
+
+    const deleteProduct = async () => {
+        try {
+            setLoading(true);
+            const response = await RequestAPI('/product/delete/' + deleteProductID, 'delete');
+
+            if (response.status === 200) {
+                setLoading(false)
+                deleteModal.onClose()
+                await loadData(currentPage)
+            } else {
+                throw new Error(response.message || 'Gagal menghapus produk');
+            }
+
+            setLoading(false);
+        } catch (error: any) {
+            console.error('Submit error:', error);
+            alert(error.message || 'Terjadi kesalahan saat menghapus produk');
+        }
+    }
+
+    const handleCallbackAddProduct = React.useCallback(async () => {
+        await loadData(currentPage);
+    }, [currentPage, loadData]);
 
     return (
         <div className="min-h-screen bg-black text-zinc-300 p-4 sm:p-6">
@@ -246,7 +287,20 @@ const ProductTable: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <AddProductModal isOpen={addModal.isOpen} onOpen={addModal.onOpen} onOpenChange={addModal.onOpenChange} />
+            <AddProductModal isOpen={addModal.isOpen} onOpen={addModal.onOpen} onOpenChange={addModal.onOpenChange} onClose={addModal.onClose} onSubmitSuccess={handleCallbackAddProduct} />
+            <MyModal title="Hapus Produk" onOpen={deleteModal.onOpen} isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange}>
+                <div className="flex gap-1">
+                    <Button
+                        onPress={deleteProduct}
+                        isLoading={loading}
+                        color="default" className="text-white hover:text-black w-6/12" variant="ghost">
+                        <IconTrash /> Hapus
+                    </Button>
+                    <Button isLoading={loading} color="danger" className="w-6/12" variant="solid">
+                        <IconCancel /> Batal
+                    </Button>
+                </div>
+            </MyModal>
         </div>
     );
 };

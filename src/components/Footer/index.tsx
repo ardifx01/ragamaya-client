@@ -1,10 +1,14 @@
 "use client"
 
 import { Image, Link } from "@heroui/react";
+import {usePathname} from "next/navigation";
 
 const Footer = () => {
+    const pathname = usePathname();
+    const isDashboard = pathname.startsWith('/dashboard');
+
     return (
-        <div className="max-w-7xl mx-auto mt-20 md:mt-42">
+        <div className={`max-w-7xl mx-auto mt-20 md:mt-42 ${isDashboard ? 'hidden' : ''}`}>
             <div className="pt-40 px-4 md:py-10 py-8">
                 <div className="md:flex md:justify-between">
                     <div id="footer">

@@ -5,9 +5,15 @@ export interface UserData {
   id?: string;
   name?: string;
   avatar?: string;
+  seller_profile?: SellerData;
   email?: string;
   exp?: number;
   iat?: number;
+}
+
+interface SellerData {
+  uuid?: string;
+  name?: string;
 }
 
 export const GetUserData = (): UserData => {
@@ -23,6 +29,7 @@ export const GetUserData = (): UserData => {
         name: decoded.name,
         email: decoded.email,
         avatar: decoded.avatar_url,
+        seller_profile: decoded.seller_profile,
         exp: decoded.exp,
         iat: decoded.iat
       } as UserData;

@@ -29,9 +29,9 @@ registerPlugin(
 
 // --- Types ---
 interface UploadedFile {
-    url: string;      // Ini akan menyimpan public_url
+    url: string;
     filename: string;
-    serverId: string; // Ini juga akan menyimpan public_url sebagai ID unik
+    serverId: string;
 }
 
 interface ProductFormData {
@@ -46,6 +46,7 @@ interface AddProductModalProps {
     isOpen: boolean;
     onOpen: () => void;
     onOpenChange: (isOpen: boolean) => void;
+    onClose: () => void;
     onSubmitSuccess?: () => void;
 }
 
@@ -69,6 +70,7 @@ const productSchema = z.object({
 const AddProductModal: React.FC<AddProductModalProps> = ({
  isOpen,
  onOpen,
+ onClose,
  onOpenChange,
  onSubmitSuccess
 }) => {
@@ -88,8 +90,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
     const [uploadedDigitalFiles, setUploadedDigitalFiles] = useState<UploadedFile[]>([]);
 
     const onSubmit = async (data: ProductFormData) => {
-        // ... (Fungsi onSubmit tidak perlu diubah)
         try {
+
             if (uploadedThumbnails.length === 0) {
                 alert("Harap upload minimal satu thumbnail.");
                 return;
@@ -111,14 +113,13 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
             console.log("Data siap dikirim ke API:", productData);
             const response = await RequestAPI('/product/register', 'post', productData);
 
-            if (response.status === 201) {
-                alert("Produk berhasil ditambahkan!");
+            if (response.status === 200) {
                 reset();
                 setUploadedThumbnails([]);
                 setUploadedDigitalFiles([]);
                 thumbnailsPond.current?.removeFiles();
                 digitalFilesPond.current?.removeFiles();
-                onOpenChange(false);
+                onClose()
                 onSubmitSuccess?.();
             } else {
                 throw new Error(response.message || 'Gagal membuat produk');
@@ -129,7 +130,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
         }
     };
 
-    // --- PENYESUAIAN UTAMA ADA DI SINI ---
     const filePondServerConfig = {
         process: {
             url: `${process.env.NEXT_PUBLIC_BASE_API}/storage/image/upload`,
@@ -261,7 +261,36 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                 </div>
             </form>
             <style jsx global>{`
-                /* ... Custom FilePond Styles tidak berubah ... */
+                .filepond-dark .filepond--root {
+                    background: rgba(39, 39, 42, 0.5);
+                    border: 1px solid rgb(39, 39, 42);
+                    border-radius: 8px;
+                }
+
+                .filepond-dark .filepond--panel-root {
+                    background: rgba(39, 39, 42, 0.3);
+                }
+
+                .filepond-dark .filepond--drop-label {
+                    color: rgb(161, 161, 170);
+                }
+
+                .filepond-dark .filepond--label-action {
+                    color: rgb(59, 130, 246);
+                    text-decoration: underline;
+                }
+
+                .filepond-dark .filepond--item {
+                    background: rgba(24, 24, 27, 0.8);
+                }
+
+                .filepond-dark .filepond--file-info-main {
+                    color: rgb(228, 228, 231);
+                }
+
+                .filepond-dark .filepond--file-info-sub {
+                    color: rgb(161, 161, 170);
+                }
             `}</style>
         </MyModal>
     );

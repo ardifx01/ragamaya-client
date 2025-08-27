@@ -106,7 +106,7 @@ const Article = () => {
                       </Chip>
                     ))}
                   </motion.div>
-                  
+
                   <motion.h3
                     variants={itemVariants}
                     className="text-xl font-bold line-clamp-2 mb-3"

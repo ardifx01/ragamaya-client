@@ -3,6 +3,7 @@
 import Hero from "@/components/LandingPage/Hero";
 import LightRays from "@/components/ui/lightrays";
 import Fitur from "@/components/LandingPage/Fitur";
+import Hero1 from "@/components/LandingPage/Hero1";
 
 export default function NavbarDemo() {
   return (
@@ -11,19 +12,17 @@ export default function NavbarDemo() {
       <div style={{ width: '100%', height: '900px', position: 'absolute' }}>
         <LightRays
           raysOrigin="top-center"
-          raysColor="#b0c6d6"
+          raysColor="#6B6B6BFF"
           raysSpeed={1.5}
           lightSpread={0.8}
-          rayLength={3}
+          rayLength={4}
           followMouse={true}
           mouseInfluence={0.1}
-          noiseAmount={0.1}
-          distortion={0.05}
           className="custom-rays top-0"
         />
       </div>
 
-      <Hero />
+      <Hero1 />
 
       <Fitur />
 

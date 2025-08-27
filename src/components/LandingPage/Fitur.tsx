@@ -83,12 +83,12 @@ const Fitur = () => {
                                 Fitur-fitur yang ada pada RagaMaya
                             </p>
                         </div>
-                        <div className="flex justify-center items-center min-h-[700px] px-4">
+                        <div className="flex justify-center items-center min-h-[600px] px-4">
                             <div className="relative w-full max-w-[320px]" style={{ height: '400px' }}>
                                 <CardSwap
                                     positioning="center"
                                     cardDistance={15}
-                                    verticalDistance={35}
+                                    verticalDistance={30}
                                     delay={4000}
                                     pauseOnHover={false}
                                     easing="elastic"

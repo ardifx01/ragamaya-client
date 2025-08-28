@@ -51,11 +51,6 @@ const articlesData = [
   },
 ];
 
-interface ArticleProps {
-  selectedLevel: string;
-  setSelectedLevel: (level: string) => void;
-}
-
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
   show: {
@@ -73,56 +68,11 @@ const itemVariants = {
   show: { opacity: 1, y: 0, filter: "blur(0px)" },
 };
 
-const Article: React.FC<ArticleProps> = ({ selectedLevel, setSelectedLevel }) => {
-  const filterByLevel = (items: typeof articlesData, level: string) => {
-    if (level === "Semua Level") return items;
-    return items.filter((item) => item.level === level);
-  };
-
-  const getLevelColor = (level: string) => {
-    const levelColors: Record<string, string> = {
-      Pemula: "bg-green-100 text-green-800",
-      Menengah: "bg-yellow-100 text-yellow-800",
-      Lanjutan: "bg-red-100 text-red-800",
-    };
-    return levelColors[level] || "bg-gray-100 text-gray-800";
-  };
-
+const Article = () => {
   return (
     <div className="mt-8 max-w-7xl mx-auto">
-      <div className="flex flex-col items-center gap-3 mb-8 md:flex-row md:flex-wrap md:justify-center">
-        <Button
-          variant={selectedLevel === "Semua Level" ? "solid" : "bordered"}
-          color={selectedLevel === "Semua Level" ? "primary" : "default"}
-          onPress={() => setSelectedLevel("Semua Level")}
-          className={`${
-            selectedLevel === "Semua Level"
-              ? "bg-gray-700 text-white border-gray-500"
-              : "bg-transparent text-gray-400 border-gray-600 hover:border-gray-400"
-          }`}
-        >
-          Semua Level
-        </Button>
-        <div className="flex flex-wrap justify-center gap-3">
-          {["Pemula", "Menengah", "Lanjutan"].map((level) => (
-            <Button
-              key={level}
-              variant={selectedLevel === level ? "solid" : "bordered"}
-              color={selectedLevel === level ? "primary" : "default"}
-              onPress={() => setSelectedLevel(level)}
-              className={`${
-                selectedLevel === level
-                  ? "bg-gray-700 text-white border-gray-500"
-                  : "bg-transparent text-gray-400 border-gray-600 hover:border-gray-400"
-              }`}
-            >
-              {level}
-            </Button>
-          ))}
-        </div>
-      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filterByLevel(articlesData, selectedLevel).map((article, index) => (
+        {articlesData.map((article, index) => (
           <motion.div
             key={article.id}
             variants={containerVariants}
@@ -155,15 +105,8 @@ const Article: React.FC<ArticleProps> = ({ selectedLevel, setSelectedLevel }) =>
                         {tag}
                       </Chip>
                     ))}
-                    <Chip
-                      size="sm"
-                      variant="flat"
-                      className={`${getLevelColor(article.level)} px-2`}
-                    >
-                      {article.level}
-                    </Chip>
                   </motion.div>
-                  
+
                   <motion.h3
                     variants={itemVariants}
                     className="text-xl font-bold line-clamp-2 mb-3"

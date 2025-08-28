@@ -72,15 +72,15 @@ const products = [
     }
 ];
 
-const Product = () => {
-    const handleCardClick = (product) => {
-        console.log(`Clicked on ${product.name}`);
-    };
-
+const Product = () => { 
     return (
-        <div className="mt-12 pb-20">
+        <section className="mt-12 pb-20" aria-label="Daftar produk batik">
             <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:px-0 px-4">
+                <div 
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:px-0 px-4"
+                    role="grid"
+                    aria-label="Grid produk batik"
+                >
                     {products.map((product, index) => (
                         <motion.div
                             key={product.id}
@@ -95,72 +95,90 @@ const Product = () => {
                                 y: -8,
                                 transition: { duration: 0.2, ease: "easeOut" }
                             }}
-                            onClick={() => handleCardClick(product)}
                             className="bg-black rounded-xl border-2 border-gray-600 overflow-hidden hover:border-gray-400 transition-all duration-300 cursor-pointer"
+                            role="gridcell"
+                            tabIndex={0}
+                            aria-label={`Produk batik ${product.name}, kategori ${product.category}, harga Rp${product.price}`}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    // Handle product selection
+                                }
+                            }}
                         >
-                            <div className="relative p-4 pb-0">
-                                <div
-                                    className="w-full h-48 rounded-lg bg-gradient-to-br from-amber-600 to-amber-800 mb-4 overflow-hidden"
-                                    style={{
-                                        backgroundImage: "repeating-linear-gradient(45deg, #92400e 0px, #92400e 4px, #f59e0b 4px, #f59e0b 8px)",
-                                        backgroundSize: "16px 16px"
-                                    }}
-                                >
-                                    <div className="w-full h-full bg-black bg-opacity-10">
-                                        <Image
-                                            src={product.image}
-                                            alt={product.name}
-                                            width={300}
-                                            height={300}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="p-4 pt-0 text-white">
-                                <div className="flex justify-between items-start mb-3">
-                                    <h3 className="text-xl font-bold">{product.name}</h3>
-                                    <span className="bg-gray-800 text-white text-xs px-3 py-1 rounded-full">
-                                        {product.category}
-                                    </span>
-                                </div>
-                                <p className="text-gray-400 text-sm mb-4">
-                                    {product.description}
-                                </p>
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="flex items-center gap-1">
-                                        <Star size={16} className="text-yellow-500 fill-yellow-500" />
-                                        <span className="text-sm font-medium">{product.rating}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1 text-gray-400">
-                                        <Download size={16} />
-                                        <span className="text-sm">{product.downloads.toLocaleString('en-US')}</span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <span className="text-2xl font-bold">Rp{product.price}</span>
-                                        <p className="text-xs text-gray-400 mt-1">SVG License</p>
-                                    </div>
-                                    <HoverBorderGradient
-                                        containerClassName="rounded-lg"
-                                        as="button"
-                                        className="bg-gray-800 text-white cursor-pointer px-4 py-2 hover:bg-gray-700 transition-colors duration-200"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            console.log(`Buy license for ${product.name}`);
+                            <article className="h-full">
+                                <div className="relative p-4 pb-0">
+                                    <div
+                                        className="w-full h-48 rounded-lg bg-gradient-to-br from-amber-600 to-amber-800 mb-4 overflow-hidden"
+                                        style={{
+                                            backgroundImage: "repeating-linear-gradient(45deg, #92400e 0px, #92400e 4px, #f59e0b 4px, #f59e0b 8px)",
+                                            backgroundSize: "16px 16px"
                                         }}
                                     >
-                                        <span className="font-bold text-sm">Buy License</span>
-                                    </HoverBorderGradient>
+                                        <div className="w-full h-full bg-black bg-opacity-10">
+                                            <Image
+                                                src={product.image}
+                                                alt={`Motif batik ${product.name} - ${product.description}`}
+                                                width={300}
+                                                height={300}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                                <div className="p-4 pt-0 text-white">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <h3 className="text-xl font-bold">{product.name}</h3>
+                                        <span 
+                                            className="bg-gray-800 text-white text-xs px-3 py-1 rounded-full"
+                                            aria-label={`Kategori: ${product.category}`}
+                                        >
+                                            {product.category}
+                                        </span>
+                                    </div>
+                                    <p className="text-gray-400 text-sm mb-4">
+                                        {product.description}
+                                    </p>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center gap-1" role="group" aria-label={`Rating ${product.rating} dari 5 bintang`}>
+                                            <Star size={16} className="text-yellow-500 fill-yellow-500" aria-hidden="true" />
+                                            <span className="text-sm font-medium" aria-label={`Rating: ${product.rating}`}>
+                                                {product.rating}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-1 text-gray-400" role="group" aria-label={`${product.downloads.toLocaleString('en-US')} unduhan`}>
+                                            <Download size={16} aria-hidden="true" />
+                                            <span className="text-sm">{product.downloads.toLocaleString('en-US')}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <span className="text-2xl font-bold" aria-label={`Harga: Rp${product.price}`}>
+                                                Rp{product.price}
+                                            </span>
+                                            <p className="text-xs text-gray-400 mt-1">SVG License</p>
+                                        </div>
+                                        <HoverBorderGradient
+                                            containerClassName="rounded-lg"
+                                            as="button"
+                                            className="bg-gray-800 text-white cursor-pointer px-4 py-2 hover:bg-gray-700 transition-colors duration-200"
+                                            aria-label={`Beli lisensi untuk motif batik ${product.name}`}
+                                            onClick={() => {
+                                            }}
+                                        >
+                                            <span className="font-bold text-sm">Buy License</span>
+                                        </HoverBorderGradient>
+                                    </div>
+                                </div>
+                            </article>
                         </motion.div>
                     ))}
                 </div>
-                <h1 className="text-white text-2xl pt-12 flex justify-center">Pagination</h1>
+                <div className="text-center pt-12" role="navigation" aria-label="Navigasi halaman">
+                    <h2 className="text-white text-2xl">Pagination</h2>
+                </div>
             </div>
-        </div>
+        </section>
     )
 }
 

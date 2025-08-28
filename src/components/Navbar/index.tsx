@@ -10,9 +10,10 @@ import {
 import { useState, useEffect } from "react";
 import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
-import { Image } from "@heroui/react";
+import {Button, Image, useDisclosure} from "@heroui/react";
 import { GetUserData, isUserLoggedIn, handleLogout as logoutUser } from "@/lib/GetUserData";
 import {usePathname} from "next/navigation";
+import ModalRegisterSeller from "@/components/ui/modal/ModalRegisterSeller";
 
 interface NavItem {
   name: string;
@@ -28,6 +29,7 @@ interface UserData {
   name?: string;
   avatar?: string;
   email?: string;
+  role?: string;
 }
 
 export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
@@ -40,6 +42,9 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState<UserData>({});
   const [isLoading, setIsLoading] = useState(true);
+
+  // Modal
+    const modalRegisterSeller = useDisclosure();
 
   const Avatar = ({ src, alt, className }: { src?: string; alt: string; className: string }) => {
     const [imgSrc, setImgSrc] = useState(src || "https://ui-avatars.com/api/?name=" + encodeURIComponent(alt) + "&background=random");
@@ -201,7 +206,30 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
                           </p>
                         </div>
 
-                        <Link
+                          {userData.role === "user" ? (
+                              <Link
+                                  href="#"
+                                  type="button"
+                                  className="flex items-center px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
+                                  onClick={(e) => {
+                                      e.preventDefault();
+                                      toggleDropdown();
+                                      modalRegisterSeller.onOpen()
+                                  }}
+                              >
+                                  Daftar Sebagai Penjual
+                              </Link>
+                          ) : (
+                              <Link
+                                  href="/dashboard"
+                                  className="flex items-center px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
+                                  onClick={() => setIsDropdownOpen(false)}
+                              >
+                                  Dashboard
+                              </Link>
+                          )}
+
+                          <Link
                           href="/pembelian"
                           className="flex items-center px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
                           onClick={() => setIsDropdownOpen(false)}
@@ -371,6 +399,7 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
         onClose={() => setIsLoginOpen(false)}
         onLoginSuccess={handleLoginSuccess}
       />
+    <ModalRegisterSeller isOpen={modalRegisterSeller.isOpen} onOpen={modalRegisterSeller.onOpen} onOpenChange={modalRegisterSeller.onOpenChange} onClose={modalRegisterSeller.onClose} />
     </>
   );
 }

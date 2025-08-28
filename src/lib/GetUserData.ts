@@ -7,6 +7,7 @@ export interface UserData {
   avatar?: string;
   seller_profile?: SellerData;
   email?: string;
+  role?: string;
   exp?: number;
   iat?: number;
 }
@@ -28,6 +29,7 @@ export const GetUserData = (): UserData => {
         id: decoded.sub || decoded.uuid || decoded.id,
         name: decoded.name,
         email: decoded.email,
+        role: decoded.role,
         avatar: decoded.avatar_url,
         seller_profile: decoded.seller_profile,
         exp: decoded.exp,

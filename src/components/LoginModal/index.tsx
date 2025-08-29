@@ -71,6 +71,10 @@ export const LoginModal: FC<LoginModalProps> = ({
             color: "success"
           });
 
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 1000);
+
         } else {
           const errorData = await res.json();
           addToast({

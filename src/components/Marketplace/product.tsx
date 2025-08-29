@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import RequestAPI from "@/helper/http";
 import { ProductGridSkeleton } from "./ProductSkeleton";
-import { Button, Image, Link } from "@heroui/react";
+import { Image, Link } from "@heroui/react";
 import { HoverBorderGradient } from "../ui/hover-border-gradient";
 
 interface Thumbnail {

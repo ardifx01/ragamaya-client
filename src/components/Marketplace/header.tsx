@@ -1,30 +1,95 @@
-import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
-import { Input, Select, SelectItem } from "@heroui/react";
-import { Search, Store, ChevronDown, Funnel } from "lucide-react";
-import { motion } from "motion/react";
+import { Search, Store, Funnel } from "lucide-react";
+import { motion } from "framer-motion";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useDisclosure } from "@heroui/react";
+import { GetUserData, isUserLoggedIn } from "@/lib/GetUserData";
+import { HoverBorderGradient } from "../ui/hover-border-gradient";
+import ModalRegisterSeller from "@/components/ui/modal/ModalRegisterSeller";
+import { LoginModal } from "@/components/LoginModal";
 
-export const categories = [
-    { key: "semua", label: "Semua" },
-    { key: "batik-tulis", label: "Batik Tulis" },
-    { key: "batik-cap", label: "Batik Cap" },
-    { key: "batik-printing", label: "Batik Printing" },
-    { key: "batik-solo", label: "Batik Solo" },
-    { key: "batik-yogya", label: "Batik Yogya" },
-    { key: "batik-pekalongan", label: "Batik Pekalongan" },
-    { key: "batik-cirebon", label: "Batik Cirebon" },
-];
+interface UserData {
+    id?: string;
+    name?: string;
+    avatar?: string;
+    email?: string;
+    role?: string;
+}
 
-export const priceRanges = [
-    { key: "0-100", label: "Rp 0 - Rp 100.000" },
-    { key: "100-250", label: "Rp 100.000 - Rp 250.000" },
-    { key: "250-500", label: "Rp 250.000 - Rp 500.000" },
-    { key: "500-1000", label: "Rp 500.000 - Rp 1.000.000" },
-    { key: "1000-plus", label: "Rp 1.000.000+" },
-];
+interface HeaderProps {
+    searchKeyword: string;
+    onSearchChange: (value: string) => void;
+    loading?: boolean;
+}
 
-const Header = () => {
+const Header: React.FC<HeaderProps> = ({ 
+    searchKeyword, 
+    onSearchChange, 
+    loading = false
+}) => {
+    const [userData, setUserData] = useState<UserData>({});
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
+
+    const modalRegisterSeller = useDisclosure();
+
+    const checkLoginStatus = () => {
+        setIsLoading(true);
+        try {
+            const loggedIn = isUserLoggedIn();
+
+            if (loggedIn) {
+                setIsLoggedIn(true);
+                const user_data = GetUserData();
+                setUserData(user_data);
+            } else {
+                setIsLoggedIn(false);
+                setUserData({});
+            }
+        } catch (error) {
+            console.error("Error checking login status:", error);
+            setIsLoggedIn(false);
+            setUserData({});
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        checkLoginStatus();
+
+        const handleStorageChange = () => {
+            checkLoginStatus();
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, []);
+
+    const handleLoginSuccess = () => {
+        checkLoginStatus();
+        setIsLoginOpen(false);
+    };
+
+    const handleSellerButtonClick = (e: React.MouseEvent) => {
+        if (!isLoggedIn) {
+            e.preventDefault();
+            setIsLoginOpen(true);
+            return;
+        }
+
+        if (userData?.role === "user") {
+            e.preventDefault();
+            modalRegisterSeller.onOpen();
+        }
+    };
+
     return (
+        <>
         <div className="px-4 pt-28">
             <div className="max-w-7xl w-full mx-auto">
                 <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 pt-8 lg:pt-16">
@@ -69,17 +134,66 @@ const Header = () => {
                         transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
                         className="flex justify-center lg:justify-end"
                     >
-                        <Link href="#" aria-label="Menjadi penjual batik">
-                            <HoverBorderGradient
-                                containerClassName="rounded-lg"
-                                as="button"
-                                className="bg-black text-white flex items-center space-x-2 border cursor-pointer px-6 py-3"
-                                aria-label="Tombol untuk menjadi penjual"
+                        {isLoading ? (
+                            <div className="w-full sm:w-auto">
+                                <div className="bg-black border-2 border-gray-600 rounded-lg px-4 sm:px-6 py-3 w-full sm:w-auto">
+                                    <div className="flex items-center justify-center space-x-2">
+                                        <div className="w-5 h-5 bg-gray-600 rounded animate-pulse"></div>
+                                        <div className="w-24 h-4 bg-gray-600 rounded animate-pulse"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : userData?.role === "user" ? (
+                            <Link 
+                                href="#" 
+                                aria-label="Daftar Sebagai Penjual" 
+                                className="w-full sm:w-auto"
+                                onClick={handleSellerButtonClick}
                             >
-                                <Store size={20} className="md:w-6 md:h-6" aria-hidden="true" />
-                                <span className="font-bold text-sm md:text-lg">Jadilah Penjual</span>
-                            </HoverBorderGradient>
-                        </Link>
+                                <HoverBorderGradient
+                                    containerClassName="rounded-lg w-full sm:w-auto"
+                                    as="button"
+                                    className="bg-black text-white flex items-center justify-center space-x-2 border cursor-pointer px-4 sm:px-6 py-3 w-full sm:w-auto"
+                                    aria-label="Tombol daftar sebagai penjual"
+                                >
+                                    <Store size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6" aria-hidden="true" />
+                                    <span className="font-bold text-sm md:text-lg">Jadilah Penjual</span>
+                                </HoverBorderGradient>
+                            </Link>
+                        ) : (userData?.role === "seller" || userData?.role === "admin") ? (
+                            <Link 
+                                href="/dashboard" 
+                                aria-label="Dashboard" 
+                                className="w-full sm:w-auto"
+                            >
+                                <HoverBorderGradient
+                                    containerClassName="rounded-lg w-full sm:w-auto"
+                                    as="button"
+                                    className="bg-black text-white flex items-center justify-center space-x-2 border cursor-pointer px-4 sm:px-6 py-3 w-full sm:w-auto"
+                                    aria-label="Tombol menuju dashboard"
+                                >
+                                    <Store size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6" aria-hidden="true" />
+                                    <span className="font-bold text-sm md:text-lg">Dashboard</span>
+                                </HoverBorderGradient>
+                            </Link>
+                        ) : (
+                            <Link 
+                                href="#" 
+                                aria-label="Login untuk Jadi Penjual" 
+                                className="w-full sm:w-auto"
+                                onClick={handleSellerButtonClick}
+                            >
+                                <HoverBorderGradient
+                                    containerClassName="rounded-lg w-full sm:w-auto"
+                                    as="button"
+                                    className="bg-black text-white flex items-center justify-center space-x-2 border cursor-pointer px-4 sm:px-6 py-3 w-full sm:w-auto"
+                                    aria-label="Tombol login untuk jadi penjual"
+                                >
+                                    <Store size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6" aria-hidden="true" />
+                                    <span className="font-bold text-sm md:text-lg">Login untuk Jadi Penjual</span>
+                                </HoverBorderGradient>
+                            </Link>
+                        )}
                     </motion.div>
                 </div>
 
@@ -89,7 +203,7 @@ const Header = () => {
                     transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
                     className="bg-black w-full mt-10 rounded-xl border-2 border-gray-500 text-white"
                     role="search"
-                    aria-label="Panel pencarian dan filter produk batik"
+                    aria-label="Panel pencarian produk batik"
                 >
                     <div className="p-4 md:p-5 w-full">
                         <motion.div
@@ -105,99 +219,47 @@ const Header = () => {
                             >
                                 <Funnel size={20} aria-hidden="true" />
                             </motion.div>
-                            <h2 className="text-lg font-medium">Filter</h2>
+                            <h2 className="text-lg font-medium">Pencarian</h2>
                         </motion.div>
 
-                        <div className="flex flex-col lg:flex-row gap-4">
+                        <div className="w-full">
                             <motion.div
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: 1.3, ease: "easeOut" }}
-                                className="w-full lg:basis-1/2"
+                                className="relative"
                             >
-                                <Input
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                <input
                                     type="text"
                                     placeholder="Cari motif atau jenis batik..."
-                                    startContent={<Search size={20} className="text-gray-400" aria-hidden="true" />}
-                                    variant="bordered"
-                                    size="lg"
+                                    value={searchKeyword}
+                                    onChange={(e) => onSearchChange(e.target.value)}
+                                    disabled={loading}
+                                    className="w-full bg-transparent border-2 border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder:text-gray-300 focus:border-white focus:outline-none transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                     aria-label="Pencarian motif atau jenis batik"
-                                    classNames={{
-                                        inputWrapper: "border-2 border-gray-600 bg-transparent transition-all duration-300 hover:border-gray-400 focus-within:border-white",
-                                        input: "text-white placeholder:text-gray-300",
-                                    }}
                                 />
-                            </motion.div>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: 1.4, ease: "easeOut" }}
-                                className="w-full lg:basis-1/4"
-                            >
-                                <Select
-                                    className="w-full"
-                                    size="lg"
-                                    placeholder="Pilih kategori"
-                                    variant="bordered"
-                                    aria-label="Pilih kategori batik"
-                                    selectorIcon={<ChevronDown size={20} className="text-gray-400" aria-hidden="true" />}
-                                    classNames={{
-                                        trigger: "border-2 border-gray-600 bg-transparent transition-all duration-300 hover:border-gray-400 data-[open=true]:border-white",
-                                        value: "text-white !text-white",
-                                        selectorIcon: "text-gray-400",
-                                        popoverContent: "bg-gray-800 border border-gray-600",
-                                        listbox: "bg-gray-800",
-                                    }}
-                                >
-                                    {categories.map((category) => (
-                                        <SelectItem
-                                            key={category.key}
-                                            className="text-white data-[hover=true]:bg-gray-700 data-[selectable=true]:focus:bg-gray-700"
-                                        >
-                                            {category.label}
-                                        </SelectItem>
-                                    ))}
-                                </Select>
-                            </motion.div>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.5, delay: 1.5, ease: "easeOut" }}
-                                className="w-full lg:basis-1/4"
-                            >
-                                <Select
-                                    className="w-full"
-                                    size="lg"
-                                    placeholder="Pilih rentang harga"
-                                    variant="bordered"
-                                    aria-label="Pilih rentang harga batik"
-                                    selectorIcon={<ChevronDown size={20} className="text-gray-400" aria-hidden="true" />}
-                                    classNames={{
-                                        trigger: "border-2 border-gray-600 bg-transparent transition-all duration-300 hover:border-gray-400 data-[open=true]:border-white",
-                                        value: "text-white !text-white",
-                                        selectorIcon: "text-gray-400",
-                                        popoverContent: "bg-gray-800 border border-gray-600",
-                                        listbox: "bg-gray-800",
-                                    }}
-                                >
-                                    {priceRanges.map((price) => (
-                                        <SelectItem
-                                            key={price.key}
-                                            className="text-white data-[hover=true]:bg-gray-700 data-[selectable=true]:focus:bg-gray-700"
-                                        >
-                                            {price.label}
-                                        </SelectItem>
-                                    ))}
-                                </Select>
                             </motion.div>
                         </div>
                     </div>
                 </motion.div>
             </div>
         </div>
-    )
-}
+        
+        <LoginModal
+            isOpen={isLoginOpen}
+            onClose={() => setIsLoginOpen(false)}
+            onLoginSuccess={handleLoginSuccess}
+        />
+        
+        <ModalRegisterSeller 
+            isOpen={modalRegisterSeller.isOpen} 
+            onOpen={modalRegisterSeller.onOpen} 
+            onOpenChange={modalRegisterSeller.onOpenChange} 
+            onClose={modalRegisterSeller.onClose} 
+        />
+        </>
+    );
+};
 
-export default Header
+export default Header;

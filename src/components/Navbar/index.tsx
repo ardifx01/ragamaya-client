@@ -10,7 +10,7 @@ import {
 import { useState, useEffect } from "react";
 import { LoginModal } from "@/components/LoginModal";
 import Link from "next/link";
-import {Button, Image, useDisclosure} from "@heroui/react";
+import {  Image, useDisclosure} from "@heroui/react";
 import { GetUserData, isUserLoggedIn, handleLogout as logoutUser } from "@/lib/GetUserData";
 import {usePathname} from "next/navigation";
 import ModalRegisterSeller from "@/components/ui/modal/ModalRegisterSeller";

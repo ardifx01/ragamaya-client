@@ -102,7 +102,7 @@ const Hero1 = () => {
                         </h1>
                         <p
                             ref={descriptionRef}
-                            className="text-white text- md:text-lg max-w-full md:max-w-[600px] font-semibold mx-auto md:mx-0"
+                            className="text-white text-sm md:text-lg max-w-full md:max-w-[600px] font-semibold mx-auto md:mx-0"
                         >
                             Platform AI terdepan untuk mengenali motif batik, belajar budaya, berbelanja, dan terhubung dengan komunitas pecinta Batik.
                         </p>

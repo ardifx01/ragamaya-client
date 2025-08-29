@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import {IconArrowLeft, IconBuildingStore, IconDashboard, IconHome, IconSettings} from "@tabler/icons-react";
+import {IconArrowLeft, IconBuildingStore, IconDashboard, IconHome, IconBasketCog} from "@tabler/icons-react";
 import SidebarContent from "@/components/ui/sidebar/SidebarContent";
 
 interface SidebarProps {
@@ -25,12 +25,12 @@ export default function Sidebar(props: SidebarProps) {
         {
             label: "Produk",
             href: "/dashboard/product",
-            icon: <IconBuildingStore className="h-5 w-5 shrink-0 text-gray-300" />,
+            icon: <IconBasketCog className="h-5 w-5 shrink-0 text-gray-300" />,
         },
         {
-            label: "Settings",
-            href: "/dashboard/settings", // Update to the actual route
-            icon: <IconSettings className="h-5 w-5 shrink-0 text-gray-300" />,
+            label: "Transaction",
+            href: "/dashboard/transaction", // Update to the actual route
+            icon: <IconBuildingStore className="h-5 w-5 shrink-0 text-gray-300" />,
         },
         // {
         //     label: "Logout",

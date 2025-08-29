@@ -217,14 +217,14 @@ const Product: React.FC<ProductProps> = ({
                             Stock: {product.stock}
                           </p>
                         </div>
-                        <Link href="/" aria-label="MDeteksi Batik" className="w-full sm:w-auto">
+                        <Link href="/" aria-label="Button beli produk" className="w-full flex justify-end">
                           <HoverBorderGradient
-                            containerClassName="rounded-lg w-full sm:w-auto"
+                            containerClassName="rounded-lg"
                             as="button"
-                            className="bg-blak text-white flex items-center justify-center space-x-2 border cursor-pointer px-4 sm:px-5 py-3 w-full sm:w-auto"
+                            className="bg-black text-white flex items-center justify-center space-x-2 border cursor-pointer px-4 sm:px-5 py-3 w-full sm:w-auto"
                             aria-label="Tombol menuju page deteksi"
                           >
-                            <span className="font-bold text-sm md:text-base">Beli Produk</span>
+                            <p className="font-bold text-sm md:text-base">Beli Produk</p>
                           </HoverBorderGradient>
                         </Link>
                       </div>
@@ -241,7 +241,7 @@ const Product: React.FC<ProductProps> = ({
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onPress={() => handlePageChange(currentPage - 1)}
+                    onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage <= 1 || loading}
                     className="flex items-center justify-center w-8 h-8 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -251,7 +251,7 @@ const Product: React.FC<ProductProps> = ({
                     {currentPage}
                   </span>
                   <button
-                    onPress={() => handlePageChange(currentPage + 1)}
+                    onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage >= totalPages || totalPages <= 1 || loading}
                     className="flex items-center justify-center w-8 h-8 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >

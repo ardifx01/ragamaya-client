@@ -240,9 +240,8 @@ const WalletPage: React.FC = () => {
     // ✅ Perbaikan dasar
     const handleIsSubmittedPayout = React.useCallback(() => {
         setActiveTab('payout');
-        fetchWalletInfo();
-        fetchWalletHistory();
-        fetchPayoutHistory();
+        loadInitialData();
+        loadPayoutData();
     }, [fetchWalletInfo, fetchWalletHistory, fetchPayoutHistory]);
 
 

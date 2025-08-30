@@ -12,10 +12,10 @@ const Hero = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8 md:pt-32">
+    <div className="flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8 pt-32 md:pt-32">
       <div className="text-center w-full max-w-7xl mx-auto">
         <div className="px-4 py-10 sm:py-12 md:py-20">
-          <h1 className="relative z-10 mx-auto max-w-7xl text-center text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold text-white dark:text-slate-300 leading-tight sm:leading-tight md:leading-tight lg:leading-tight">
+          <h1 className="relative z-10 mx-auto max-w-7xl text-left md:text-center text-5xl md:text-7xl font-bold text-white dark:text-slate-300 leading-tight sm:leading-tight md:leading-tight lg:leading-tight">
             {"Temukan Keindahan Budaya Batik Indonesia"
               .split(" ")
               .map((word, index) => (
@@ -45,7 +45,7 @@ const Hero = () => {
               duration: 0.3,
               delay: 0.8,
             }}
-            className="relative z-10 mx-auto max-w-xl py-4 text-center text-xs sm:text-base md:text-lg lg:text-xl font-normal text-gray-300 px-2"
+            className="relative z-10 mx-auto max-w-xl py-4 text-left md:text-center text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-gray-300 px-2"
           >
             Jelajahi pola batik tradisional dengan pengenalan berbasis AI, belanja desain digital, dan pelajari warisan budaya batik Indonesia.
           </motion.p>
@@ -66,7 +66,7 @@ const Hero = () => {
               <HoverBorderGradient
                 containerClassName="rounded-lg w-full sm:w-auto"
                 as="button"
-                className="bg-black text-white flex items-center justify-center space-x-2 border cursor-pointer w-full sm:w-auto px-4 py-2"
+                className="bg-black text-white flex items-center justify-center space-x-2 border cursor-pointer w-full sm:w-auto py-2.5 px-5 md:py-2"
               >
                 <Camera size={18} className="sm:w-5 sm:h-5" />
                 <span className="font-bold text-sm sm:text-base">Pengenalan AI</span>
@@ -74,7 +74,8 @@ const Hero = () => {
             </Link>
 
             <Button as={Link} href="/marketplace"
-              className="font-bold text-black bg-white text-sm sm:text-base w-full sm:w-auto"
+              className="font-bold text-white rounded-lg py-5 md:py-2 md:px-3 bg-black text-sm sm:text-base w-full sm:w-auto "
+              variant="bordered"
               onPress={handleMarketplace}
             >
               Jelajahi Marketplace

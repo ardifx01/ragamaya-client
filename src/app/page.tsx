@@ -1,9 +1,7 @@
-"use client"
-
 import Hero from "@/components/LandingPage/Hero";
 import LightRays from "@/components/ui/lightrays";
 import Fitur from "@/components/LandingPage/Fitur";
-import Hero1 from "@/components/LandingPage/Hero1";
+import CTA from "@/components/LandingPage/CTA";
 
 export default function NavbarDemo() {
   return (
@@ -22,9 +20,11 @@ export default function NavbarDemo() {
         />
       </div>
 
-      <Hero1 />
+      <Hero />
 
       <Fitur />
+
+      <CTA />
 
       <div className="h-screen">
         <h1></h1>

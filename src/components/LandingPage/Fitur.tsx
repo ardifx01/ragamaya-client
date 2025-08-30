@@ -34,7 +34,7 @@ const Fitur = () => {
 
     return (
         <div className="relative">
-            <div className="pt-52 pb-12">
+            <div className="pt-32 md:pt-52 pb-12">
                 <div className="max-w-6xl w-full mx-auto px-4">
                     <div className="hidden md:flex items-center justify-between gap-8">
                         <div className="flex-1 space-y-5">
@@ -83,7 +83,7 @@ const Fitur = () => {
                                 Fitur-fitur yang ada pada RagaMaya
                             </p>
                         </div>
-                        <div className="flex justify-center items-center min-h-[600px] px-4">
+                        <div className="flex justify-center items-center min-h-[650px] px-4">
                             <div className="relative w-full max-w-[320px]" style={{ height: '400px' }}>
                                 <CardSwap
                                     positioning="center"
@@ -92,7 +92,7 @@ const Fitur = () => {
                                     delay={4000}
                                     pauseOnHover={false}
                                     easing="elastic"
-                                    width={300}
+                                    width={310}
                                     height={300}
                                 >
                                     {fiturData.map((fitur) => {

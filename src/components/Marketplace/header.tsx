@@ -136,7 +136,7 @@ const Header: React.FC<HeaderProps> = ({
                     >
                         {isLoading ? (
                             <div className="w-full sm:w-auto">
-                                <div className="bg-black border-2 border-gray-600 rounded-lg px-4 sm:px-6 py-3 w-full sm:w-auto">
+                                <div className="bg-black border-2 border-white rounded-lg px-4 sm:px-6 py-3 w-full sm:w-auto">
                                     <div className="flex items-center justify-center space-x-2">
                                         <div className="w-5 h-5 bg-gray-600 rounded animate-pulse"></div>
                                         <div className="w-24 h-4 bg-gray-600 rounded animate-pulse"></div>
@@ -201,7 +201,7 @@ const Header: React.FC<HeaderProps> = ({
                     initial={{ opacity: 0, y: 50, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
-                    className="bg-black w-full mt-10 rounded-xl border-2 border-gray-500 text-white"
+                    className="bg-black w-full mt-10 rounded-xl border-2 border-white text-white"
                     role="search"
                     aria-label="Panel pencarian produk batik"
                 >

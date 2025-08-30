@@ -151,7 +151,7 @@ const Product: React.FC<ProductProps> = ({
                     y: -8,
                     transition: { duration: 0.2, ease: "easeOut" }
                   }}
-                  className="bg-black rounded-xl border-2 border-gray-600 overflow-hidden hover:border-gray-400 transition-all duration-300 cursor-pointer"
+                  className="bg-black rounded-xl border-2 border-white overflow-hidden hover:border-gray-400 transition-all duration-300 cursor-pointer"
                   role="gridcell"
                   tabIndex={0}
                   aria-label={`Produk batik ${product.name}, kategori ${product.product_type}, harga Rp${product.price.toLocaleString('id-ID')}`}

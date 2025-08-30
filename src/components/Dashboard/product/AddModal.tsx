@@ -145,35 +145,24 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
         }
     };
 
-    const filePondServerConfig = {
-        process: {
-            url: `${process.env.NEXT_PUBLIC_BASE_API}/storage/image/upload`,
-            headers: {
-                Authorization: `Bearer ${Cookies.get("access_token")}`,
-            },
-            onload: (response: any): string | ServerUrl | ProcessServerConfigFunction | null | undefined => {
-                try {
+    const filePondServerConfig = (type: 'thumbnail' | 'digitalFile') => {
+        const url = `${process.env.NEXT_PUBLIC_BASE_API}/storage/${type === 'thumbnail' ? 'image' : 'general'}/upload`;
+
+        return {
+            process: {
+                url: url,
+                headers: { Authorization: `Bearer ${Cookies.get("access_token")}` },
+                onload: (response: any): string => {
                     const res = JSON.parse(response);
-                    if (res.status === 200 && res.body && res.body.length > 0) {
-                        const fileResult = res.body[0];
-                        if (fileResult.status === "success" && fileResult.result?.public_url) {
-                            // Kembalikan public_url sebagai ID unik untuk file ini
-                            return fileResult.result.public_url;
-                        }
+                    const fileResult = res.body[0];
+                    if (fileResult.status === "success" && fileResult.result?.public_url) {
+                        return fileResult.result.public_url;
                     }
-                    console.error("Struktur respons API upload tidak sesuai:", res);
-                    return null;
-                } catch (e) {
-                    console.error("Gagal mem-parsing respons server:", e);
-                    return null;
-                }
+                    return '';
+                },
             },
-        },
-        revert: (uniqueFileId: string, load: () => void, error: (e: Error) => void) => {
-            console.log("Reverting file:", uniqueFileId);
-            // Anda bisa memanggil API delete di sini menggunakan uniqueFileId (yaitu public_url)
-            load();
-        },
+            revert: null, // Kita handle revert/delete di onremovefile
+        };
     };
 
     const handleModalClose = (isOpen: boolean) => {
@@ -215,7 +204,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                                 allowMultiple={true}
                                 maxFiles={5}
                                 acceptedFileTypes={['image/*']}
-                                server={filePondServerConfig}
+                                server={filePondServerConfig('thumbnail')}
                                 name="files"
                                 labelIdle='Drag & Drop gambar atau <span class="filepond--label-action">Browse</span>'
                                 onprocessfile={(error, file) => {
@@ -246,8 +235,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                                 ref={digitalFilesPond}
                                 allowMultiple={true}
                                 maxFiles={5}
-                                server={filePondServerConfig}
-                                name="files"
+                                server={filePondServerConfig('digitalFile')}
+                                name="file"
                                 labelIdle='Drag & Drop file digital atau <span class="filepond--label-action">Browse</span>'
                                 onprocessfile={(error, file) => {
                                     if (error) { console.error('Upload file digital error:', error); return; }

@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from "js-cookie";
 
 // --- PENYESUAIAN PENTING: RequestAPI disempurnakan untuk handle GET request ---
-const RequestAPI = async (path: string, method: "get" | "post" | "delete", body?: any, overrideToPatchMethod?: boolean) => {
+const RequestAPI = async (path: string, method: "get" | "post" | "delete" | "put", body?: any, overrideToPatchMethod?: boolean) => {
     const token = Cookies.get("access_token");
     const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API;
 

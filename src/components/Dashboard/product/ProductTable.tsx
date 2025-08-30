@@ -14,6 +14,8 @@ import RequestAPI from '@/helper/http';
 import MyModal from "@/components/ui/modal/MyModal";
 import AddProductModal from "@/components/Dashboard/product/AddModal";
 import {GetUserData} from "@/lib/GetUserData";
+import EditProductModal from "@/components/Dashboard/product/EditModal";
+import product from "@/components/Marketplace/product";
 
 // --- PENYESUAIAN INTERFACE ---
 interface Thumbnail { thumbnail_url: string; }
@@ -67,8 +69,12 @@ const ProductTable: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [pageSize] = useState<number>(10);
 
+    // Get ID Edit Product
+    const [editProductID, setEditProductID] = useState<string>('');
+
     // ModalSetting
     const addModal = useDisclosure()
+    const editModal = useDisclosure()
     const deleteModal = useDisclosure()
 
     // Get ID's
@@ -139,7 +145,17 @@ const ProductTable: React.FC = () => {
             header: () => <div className="text-right">Aksi</div>,
             cell: (info) => (
                 <div className="text-right flex justify-end gap-2">
-                    <Button color="warning" variant="ghost" size="sm" isIconOnly><IconEdit size={18} /></Button>
+                    <Button
+                        onPress={() => {
+                            editModal.onOpen()
+                            setEditProductID(info.getValue().ID)
+                        }}
+                        color="warning"
+                        variant="ghost"
+                        size="sm"
+                        isIconOnly>
+                        <IconEdit size={18} />
+                    </Button>
                     <Button
                         onPress={() => {
                             setDeleteProductID(info.getValue().ID);
@@ -273,9 +289,18 @@ const ProductTable: React.FC = () => {
                             </thead>
                             <tbody>
                             {loading ? (
-                                <tr><td colSpan={columns.length} className="text-center p-16"><Loader2 className="w-8 h-8 animate-spin text-zinc-500 mx-auto" /></td></tr>
+                                <tr>
+                                    <td colSpan={columns.length} className="text-center p-16">
+                                        <Loader2 className="w-8 h-8 animate-spin text-zinc-500 mx-auto" />
+                                    </td>
+                                </tr>
                             ) : table.getRowModel().rows.length === 0 ? (
-                                <tr><td colSpan={columns.length} className="text-center p-16"><h3 className="text-lg font-semibold text-zinc-400">Produk Tidak Ditemukan</h3><p className="text-zinc-500 mt-1 text-sm">{searchQuery ? 'Hasil filter tidak ditemukan.' : 'Tidak ada data untuk ditampilkan.'}</p></td></tr>
+                                <tr>
+                                    <td colSpan={columns.length} className="text-center p-16">
+                                        <h3 className="text-lg font-semibold text-zinc-400">Produk Tidak Ditemukan</h3>
+                                        <p className="text-zinc-500 mt-1 text-sm">{searchQuery ? 'Hasil filter tidak ditemukan.' : 'Tidak ada data untuk ditampilkan.'}</p>
+                                    </td>
+                                </tr>
                             ) : (
                                 table.getRowModel().rows.map(row => (
                                     <tr key={row.id} className="border-b border-zinc-900 hover:bg-zinc-900/50 transition-colors duration-150">
@@ -307,7 +332,25 @@ const ProductTable: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <AddProductModal isOpen={addModal.isOpen} onOpen={addModal.onOpen} onOpenChange={addModal.onOpenChange} onClose={addModal.onClose} onSubmitSuccess={handleCallbackAddProduct} />
+
+            <AddProductModal
+                isOpen={addModal.isOpen}
+                onOpen={addModal.onOpen}
+                onOpenChange={addModal.onOpenChange}
+                onClose={addModal.onClose}
+                onSubmitSuccess={handleCallbackAddProduct}
+            />
+
+            <EditProductModal
+                productID={editProductID}
+                isOpen={editModal.isOpen}
+                onOpen={editModal.onOpen}
+                onOpenChange={editModal.onOpenChange}
+                onClose={editModal.onClose}
+            >
+
+            </EditProductModal>
+
             <MyModal title="Hapus Produk" onOpen={deleteModal.onOpen} isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange}>
                 <div className="flex gap-1">
                     <Button

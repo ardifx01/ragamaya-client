@@ -5,7 +5,7 @@ import TransactionTable from "@/components/Dashboard/transaction/TransactionTabl
 const DashboardTransaction = () => {
     return (
         <div>
-            <Sidebar activeLink="Transaction">
+            <Sidebar activeLink="Transaksi">
                 <TransactionTable />
             </Sidebar>
         </div>

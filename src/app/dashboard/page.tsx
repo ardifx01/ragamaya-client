@@ -12,8 +12,8 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-// ✅ Ikon Wallet ditambahkan
-import { DollarSign, ShoppingCart, Package, Loader2, AlertCircle, Wallet } from 'lucide-react';
+// ✅ Ikon Landmark ditambahkan untuk kartu baru
+import { DollarSign, ShoppingCart, Package, Loader2, AlertCircle, Wallet, Landmark } from 'lucide-react';
 import RequestAPI from '@/helper/http';
 import Sidebar from "@/components/ui/sidebar/Sidebar";
 
@@ -49,7 +49,6 @@ interface AnalyticsData {
     monthly_orders: MonthlyOrders[];
 }
 
-// ✅ Interface baru untuk data wallet
 interface WalletInfo {
     balance: number;
     currency: string;
@@ -58,20 +57,18 @@ interface WalletInfo {
 
 const AnalyticsDashboard = () => {
     const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
-    // ✅ State baru untuk menyimpan info saldo
     const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // ✅ Mengambil data analitik dan saldo secara paralel
         const fetchData = async () => {
             setLoading(true);
             setError(null);
             try {
                 const [analyticsResponse, walletResponse] = await Promise.all([
                     RequestAPI('/seller/analytics', 'get'),
-                    RequestAPI('/wallet/info', 'get') // Panggilan API untuk saldo
+                    RequestAPI('/wallet/info', 'get')
                 ]);
 
                 if (analyticsResponse && analyticsResponse.body) {
@@ -97,37 +94,29 @@ const AnalyticsDashboard = () => {
         fetchData();
     }, []);
 
+    // ✅ Menghitung jumlah saldo yang ditarik menggunakan useMemo
+    const withdrawnAmount = useMemo(() => {
+        const totalRevenue = analyticsData?.total_revenue || 0;
+        const currentBalance = walletInfo?.balance || 0;
+
+        // Pastikan hasilnya tidak negatif
+        return Math.max(0, totalRevenue - currentBalance);
+    }, [analyticsData, walletInfo]);
+
+
     // --- Chart Data & Options (Tidak ada perubahan) ---
     const revenueChartData = useMemo(() => {
         if (!analyticsData) return { labels: [], datasets: [] };
-
-        const labels = analyticsData.monthly_revenue.map(item =>
-            new Date(item.month).toLocaleDateString('id-ID', { month: 'short', year: '2-digit' })
-        );
+        const labels = analyticsData.monthly_revenue.map(item => new Date(item.month).toLocaleDateString('id-ID', { month: 'short', year: '2-digit' }));
         const data = analyticsData.monthly_revenue.map(item => item.revenue);
-
-        return {
-            labels,
-            datasets: [{
-                label: 'Pendapatan', data, borderColor: 'rgb(54, 162, 235)', backgroundColor: 'rgba(54, 162, 235, 0.2)', fill: true, tension: 0.4,
-            }]
-        };
+        return { labels, datasets: [{ label: 'Pendapatan', data, borderColor: 'rgb(54, 162, 235)', backgroundColor: 'rgba(54, 162, 235, 0.2)', fill: true, tension: 0.4 }] };
     }, [analyticsData]);
 
     const ordersChartData = useMemo(() => {
         if (!analyticsData) return { labels: [], datasets: [] };
-
-        const labels = analyticsData.monthly_orders.map(item =>
-            new Date(item.month).toLocaleDateString('id-ID', { month: 'short', year: '2-digit' })
-        );
+        const labels = analyticsData.monthly_orders.map(item => new Date(item.month).toLocaleDateString('id-ID', { month: 'short', year: '2-digit' }));
         const data = analyticsData.monthly_orders.map(item => item.total_orders);
-
-        return {
-            labels,
-            datasets: [{
-                label: 'Total Pesanan', data, borderColor: 'rgb(75, 192, 192)', backgroundColor: 'rgba(75, 192, 192, 0.2)', fill: true, tension: 0.4,
-            }]
-        };
+        return { labels, datasets: [{ label: 'Total Pesanan', data, borderColor: 'rgb(75, 192, 192)', backgroundColor: 'rgba(75, 192, 192, 0.2)', fill: true, tension: 0.4 }] };
     }, [analyticsData]);
 
     const chartOptions = {
@@ -167,29 +156,37 @@ const AnalyticsDashboard = () => {
                             <p className="text-gray-400 mt-1">Ringkasan performa toko Anda.</p>
                         </header>
 
-                        {/* ✅ Grid diubah menjadi 4 kolom untuk layar besar */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                            {/* ✅ KARTU BARU: Total Saldo */}
+                        {/* ✅ Grid diubah untuk 5 kolom pada layar besar */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+                            {/* Total Saldo */}
                             <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-xl flex items-start gap-4">
                                 <div className="bg-indigo-500/10 p-3 rounded-lg"><Wallet className="w-6 h-6 text-indigo-400"/></div>
                                 <div>
                                     <p className="text-gray-400 text-sm">Total Saldo</p>
                                     <p className="text-2xl font-bold">
-                                        {new Intl.NumberFormat('id-ID', {
-                                            style: 'currency', currency: 'IDR', minimumFractionDigits: 0
-                                        }).format(walletInfo?.balance || 0)}
+                                        {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(walletInfo?.balance || 0)}
                                     </p>
                                 </div>
                             </div>
+
+                            {/* ✅ KARTU BARU: Saldo di Tarik */}
+                            <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-xl flex items-start gap-4">
+                                <div className="bg-red-500/10 p-3 rounded-lg"><Landmark className="w-6 h-6 text-red-400"/></div>
+                                <div>
+                                    <p className="text-gray-400 text-sm">Saldo di Tarik</p>
+                                    <p className="text-2xl font-bold">
+                                        {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(withdrawnAmount)}
+                                    </p>
+                                </div>
+                            </div>
+
                             {/* Total Pendapatan */}
                             <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-xl flex items-start gap-4">
                                 <div className="bg-green-500/10 p-3 rounded-lg"><DollarSign className="w-6 h-6 text-green-400"/></div>
                                 <div>
                                     <p className="text-gray-400 text-sm">Total Pendapatan</p>
                                     <p className="text-2xl font-bold">
-                                        {new Intl.NumberFormat('id-ID', {
-                                            style: 'currency', currency: 'IDR', minimumFractionDigits: 0
-                                        }).format(analyticsData?.total_revenue || 0)}
+                                        {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(analyticsData?.total_revenue || 0)}
                                     </p>
                                 </div>
                             </div>

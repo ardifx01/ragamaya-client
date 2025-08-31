@@ -347,9 +347,7 @@ const ProductTable: React.FC = () => {
                 onOpen={editModal.onOpen}
                 onOpenChange={editModal.onOpenChange}
                 onClose={editModal.onClose}
-            >
-
-            </EditProductModal>
+            />
 
             <MyModal title="Hapus Produk" onOpen={deleteModal.onOpen} isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange}>
                 <div className="flex gap-1">

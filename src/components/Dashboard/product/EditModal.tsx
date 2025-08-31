@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -26,27 +26,20 @@ registerPlugin(
     FilePondPluginFileValidateSize
 );
 
-// --- Types ---
-interface UploadedFile {
-    url: string;
-    filename: string;
-    serverId: string;
-}
+// Helper function for debug logging
+const debugLog = (...args: any[]) => {
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(...args);
+    }
+};
 
+// --- Types ---
 interface ProductFormData {
     name: string;
     description: string;
     price: number | unknown;
     stock: number | unknown;
     keywords: string;
-}
-
-interface ExistingFile {
-    source: string;
-    options: {
-        type: "local";
-        metadata: { id: number; product_uuid: string; };
-    };
 }
 
 interface EditProductModalProps {
@@ -69,30 +62,23 @@ const productSchema = z.object({
 
 // --- Main Component ---
 const EditProductModal: React.FC<EditProductModalProps> = ({
-   productID,
-   isOpen,
-   onClose,
-   onOpen,
-   onOpenChange,
-   onSubmitSuccess
-}) => {
+                                                               productID,
+                                                               isOpen,
+                                                               onClose,
+                                                               onOpen,
+                                                               onOpenChange,
+                                                               onSubmitSuccess
+                                                           }) => {
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
     });
 
     const thumbnailsPond = useRef<FilePond>(null);
 
-    const [uploadedThumbnails, setUploadedThumbnails] = useState<UploadedFile[]>([]);
-    const [initialThumbnails, setInitialThumbnails] = useState<ExistingFile[]>([]);
+    // Single state to track all thumbnails that should be submitted
+    const [allThumbnailUrls, setAllThumbnailUrls] = useState<string[]>([]);
     const [isLoadingData, setIsLoadingData] = useState(false);
-
-    // Ref untuk menyimpan state `uploadedThumbnails` agar tidak stale
-    const uploadedThumbnailsRef = useRef(uploadedThumbnails);
-
-    // Efek untuk menjaga ref tetap sinkron dengan state
-    useEffect(() => {
-        uploadedThumbnailsRef.current = uploadedThumbnails;
-    }, [uploadedThumbnails]);
+    const [pondKey, setPondKey] = useState(0);
 
     // Efek untuk mengambil data detail produk
     useEffect(() => {
@@ -111,13 +97,16 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                         keywords: product.keywords,
                     });
 
-                    if (product.thumbnails) {
-                        const existingThumbnails = product.thumbnails.map((thumb: any) => ({
-                            source: thumb.thumbnail_url,
-                            options: { type: 'local' as const, metadata: { id: thumb.id, product_uuid: product.uuid } },
-                        }));
-                        setInitialThumbnails(existingThumbnails);
+                    // Set initial thumbnail URLs
+                    if (product.thumbnails && product.thumbnails.length > 0) {
+                        const thumbnailUrls = product.thumbnails.map((thumb: any) => thumb.thumbnail_url);
+                        setAllThumbnailUrls(thumbnailUrls);
+                        debugLog("Initial thumbnails loaded:", thumbnailUrls);
+                    } else {
+                        setAllThumbnailUrls([]);
                     }
+
+                    setPondKey(prev => prev + 1);
                 }
             } catch (error) {
                 console.error("Fetch product error:", error);
@@ -127,32 +116,44 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
             }
         };
 
-        if (isOpen) {
+        if (isOpen && productID) {
             fetchProductDetails();
-        } else {
-            setInitialThumbnails([]);
-            setUploadedThumbnails([]);
+        } else if (!isOpen) {
+            setAllThumbnailUrls([]);
+            setPondKey(prev => prev + 1);
         }
     }, [isOpen, productID, reset]);
 
-    // Menggabungkan file lama dan baru untuk ditampilkan di FilePond
-    const allThumbnails = useMemo(() => {
-        const newlyUploadedFiles = uploadedThumbnails.map(file => ({
-            source: file.url,
+    // Convert URLs to FilePond format
+    const getFilePondFiles = useCallback(() => {
+        return allThumbnailUrls.map((url, index) => ({
+            source: url,
             options: {
                 type: 'local' as const,
+                metadata: { url, index }
             }
         }));
-        return [...initialThumbnails, ...newlyUploadedFiles];
-    }, [initialThumbnails, uploadedThumbnails]);
+    }, [allThumbnailUrls]);
 
     // Handler untuk submit form
     const onSubmit = async (data: ProductFormData) => {
         try {
+            debugLog("=== SUBMIT DEBUG ===");
+            debugLog("All thumbnails to submit:", allThumbnailUrls);
+
+            const finalThumbnails = allThumbnailUrls.map(url => ({
+                thumbnail_url: url
+            }));
+
+            debugLog("Final thumbnails payload:", finalThumbnails);
+
             const productData = {
                 ...data,
-                thumbnails: uploadedThumbnails.map(file => ({ thumbnail_url: file.url })),
+                price: Number(data.price),
+                stock: Number(data.stock),
+                thumbnails: finalThumbnails,
             };
+
             const response = await RequestAPI(`/product/update/${productID}`, 'put', productData);
             if (response.status === 200) {
                 addToast({ title: 'Success', description: 'Berhasil mengubah Produk', color: 'success' });
@@ -162,52 +163,80 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                 throw new Error(response.message || 'Gagal mengubah produk');
             }
         } catch (error: any) {
+            console.error("Submit error:", error);
             addToast({ title: 'Error', description: error.message || 'Gagal mengubah produk', color: 'danger' });
         }
     };
 
     // Konfigurasi server FilePond
-    const filePondServerConfig = (type: 'thumbnail' | 'digitalFile') => ({
+    const filePondServerConfig = () => ({
         process: {
-            url: `${process.env.NEXT_PUBLIC_BASE_API}/storage/${type === 'thumbnail' ? 'image' : 'general'}/upload`,
+            url: `${process.env.NEXT_PUBLIC_BASE_API}/storage/image/upload`,
             headers: { Authorization: `Bearer ${Cookies.get("access_token")}` },
             onload: (response: any): string => {
                 try {
-                    const res = JSON.parse(response);
-                    const fileResult = res.body[0];
-                    return fileResult.status === "success" ? fileResult.result.public_url : '';
-                } catch (e) { return ''; }
+                    const parsedResponse = JSON.parse(response);
+                    const responseBody = parsedResponse.body || parsedResponse;
+                    const fileResult = Array.isArray(responseBody) ? responseBody[0] : responseBody;
+
+                    if (fileResult && fileResult.status === "success" && fileResult.result && fileResult.result.public_url) {
+                        const newUrl = fileResult.result.public_url;
+                        debugLog("Upload successful! New URL:", newUrl);
+
+                        // Add to thumbnails list
+                        setAllThumbnailUrls(prev => {
+                            const updated = [...prev, newUrl];
+                            debugLog("Updated allThumbnailUrls after upload:", updated);
+                            return updated;
+                        });
+
+                        return newUrl;
+                    } else {
+                        console.error("Failed to get public_url from response:", fileResult);
+                        return '';
+                    }
+                } catch (e) {
+                    console.error("Failed to parse JSON from server:", e);
+                    return '';
+                }
             },
+            revert: null,
         },
-        revert: null,
     });
 
-    // Handler untuk menghapus thumbnail
-    const handleRemoveThumbnail = useCallback(async (error: any, file: any) => {
-        const metadata = file.getMetadata();
-        if (metadata?.id) { // File lama
-            try {
-                const response = await RequestAPI(`/product/delete/thumbnail?product_uuid=${metadata.product_uuid}&id=${metadata.id}`, 'delete');
-                if (response.status === 200) {
-                    addToast({ title: 'Success', description: 'Thumbnail berhasil dihapus', color: 'success'});
-                    setInitialThumbnails(prev => prev.filter(f => f.options.metadata.id !== metadata.id));
-                } else {
-                    throw new Error('Gagal menghapus thumbnail dari server');
-                }
-            } catch (err) {
-                addToast({ title: 'Error', description: 'Gagal menghapus thumbnail', color: 'danger'});
-            }
-        } else { // File baru
-            setUploadedThumbnails(prev => prev.filter(f => f.serverId !== file.serverId));
+    // Handler untuk file yang dihapus
+    const handleRemoveFile = useCallback((error: any, file: any) => {
+        if (error) {
+            console.error("Remove file error:", error);
+            return;
         }
+
+        // Skip if file just finished processing (to prevent auto-removal after upload)
+        if (file.status === 5) {
+            debugLog("File just completed upload, skipping removal");
+            return;
+        }
+
+        const metadata = file.getMetadata();
+        const fileUrl = metadata?.url || file.serverId || file.source;
+
+        debugLog("Removing file with URL:", fileUrl);
+
+        // Remove from thumbnails list
+        setAllThumbnailUrls(prev => {
+            const updated = prev.filter(url => url !== fileUrl);
+            debugLog("Updated allThumbnailUrls after removal:", updated);
+            return updated;
+        });
+
     }, []);
 
     // Handler untuk menutup modal
     const handleModalClose = (isOpen: boolean) => {
         if (!isOpen) {
             reset();
-            setUploadedThumbnails([]);
-            setInitialThumbnails([]);
+            setAllThumbnailUrls([]);
+            setPondKey(prev => prev + 1);
             onClose();
         }
         onOpenChange(isOpen);
@@ -233,29 +262,25 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                         <Card className="bg-zinc-900/50 border border-zinc-800">
                             <CardBody className="space-y-3">
                                 <h4 className="text-sm font-medium text-zinc-300">Thumbnail Produk</h4>
+                                {process.env.NODE_ENV !== 'production' && (
+                                    <div className="text-xs text-zinc-400 bg-zinc-800/50 p-2 rounded">
+                                        <div>Debug Info:</div>
+                                        <div>Total thumbnails: {allThumbnailUrls.length}</div>
+                                        <div>URLs: {allThumbnailUrls.join(', ')}</div>
+                                    </div>
+                                )}
                                 <FilePond
-                                    key={productID || 'new-product'}
+                                    key={pondKey}
                                     ref={thumbnailsPond}
-                                    files={allThumbnails}
+                                    files={getFilePondFiles()}
+                                    allowReorder={true}
                                     allowMultiple={true}
                                     maxFiles={5}
-                                    acceptedFileTypes={['image/*']}
-                                    server={filePondServerConfig('thumbnail')}
+                                    server={filePondServerConfig()}
                                     name="files"
                                     instantUpload={true}
+                                    onremovefile={handleRemoveFile}
                                     labelIdle='Drag & Drop gambar atau <span class="filepond--label-action">Browse</span>'
-                                    onprocessfile={(error, file) => {
-                                        if (error) { console.error('Upload file error:', error); return; }
-                                        const serverId = file.serverId;
-                                        if (serverId) {
-                                            const currentFiles = uploadedThumbnailsRef.current;
-                                            setUploadedThumbnails([
-                                                ...currentFiles,
-                                                { url: serverId, filename: file.filename, serverId: serverId }
-                                            ]);
-                                        }
-                                    }}
-                                    onremovefile={handleRemoveThumbnail}
                                     disabled={isSubmitting}
                                     className="filepond-dark"
                                 />
@@ -265,7 +290,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
                     <div className="flex justify-end gap-3 pt-4 border-t border-zinc-800">
                         <Button variant="bordered" onPress={() => handleModalClose(false)} isDisabled={isSubmitting}>Batal</Button>
-                        <Button type="submit" color="primary" isLoading={isSubmitting}>Simpan Perubahan</Button>
+                        <Button type="submit" color="primary" isLoading={isSubmitting}>
+                            Simpan Perubahan
+                        </Button>
                     </div>
                 </form>
             )}

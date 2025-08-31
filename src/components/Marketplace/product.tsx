@@ -1,5 +1,5 @@
-import { Star, Download, ChevronLeft, ChevronRight, SearchX } from "lucide-react";
-import { motion } from "framer-motion";
+import { Star, Download, ChevronLeft, ChevronRight, SearchX, ShoppingCart } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import RequestAPI from "@/helper/http";
 import { ProductGridSkeleton } from "./ProductSkeleton";
@@ -19,7 +19,7 @@ interface DigitalFile {
 interface Product {
   uuid: string;
   seller_uuid: string;
-  product_type: 'digital' | 'physical';
+  product_type: string;
   name: string;
   description: string;
   price: number;
@@ -115,150 +115,221 @@ const Product: React.FC<ProductProps> = ({
         {loading ? (
           <ProductGridSkeleton count={3} />
         ) : !products || products.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-24 h-24 mx-auto mb-4 opacity-20">
-              <SearchX size={100} className="text-white" aria-hidden="true" />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-32"
+          >
+            <div className="w-32 h-32 mx-auto mb-8 rounded-full bg-gradient-to-r from-gray-800 to-gray-700 flex items-center justify-center">
+              <SearchX size={60} className="text-gray-400" aria-hidden="true" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-400 mb-2">Produk Tidak Ditemukan</h3>
-            <p className="text-gray-500">
-              {searchKeyword ? `Tidak ada hasil untuk "${searchKeyword}"` : 'Tidak ada produk tersedia'}
+            <h3 className="text-3xl font-bold text-white mb-4">Produk Tidak Ditemukan</h3>
+            <p className="text-gray-400 text-lg max-w-md mx-auto leading-relaxed">
+              {searchKeyword
+                ? `Maaf, tidak ada hasil yang cocok dengan pencarian "${searchKeyword}". Coba kata kunci lain.`
+                : 'Tidak ada produk tersedia saat ini. Silakan periksa kembali nanti.'
+              }
             </p>
-          </div>
+          </motion.div>
         ) : (
           <div>
-            <div className="mb-6">
-              <p className="text-gray-400 text-sm">
-                Menampilkan {(products || []).length} dari {totalItems} produk
-                {searchKeyword && ` untuk "${searchKeyword}"`}
-              </p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8 flex items-center justify-between"
+            >
+              <div>
+                <p className="text-gray-400 text-sm">
+                  Menampilkan {(products || []).length} dari {totalItems} produk
+                  {searchKeyword && (
+                    <span>
+                      untuk <span className="text-white">{`"${searchKeyword}"`}</span>
+                    </span>
+                  )}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="text-sm text-gray-400">
+                  Halaman {currentPage} dari {Math.max(1, totalPages)}
+                </div>
+              </div>
+            </motion.div>
+
             <div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
               role="grid"
               aria-label="Grid produk batik"
             >
-              {(products || []).map((product, index) => (
-                <motion.div
-                  key={product.uuid}
-                  initial={{ opacity: 0, y: 50, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: index * 0.1,
-                    ease: "easeOut"
-                  }}
-                  whileHover={{
-                    y: -8,
-                    transition: { duration: 0.2, ease: "easeOut" }
-                  }}
-                  className="bg-black rounded-xl border-2 border-white overflow-hidden hover:border-gray-400 transition-all duration-300 cursor-pointer"
-                  role="gridcell"
-                  tabIndex={0}
-                  aria-label={`Produk batik ${product.name}, kategori ${product.product_type}, harga Rp${product.price.toLocaleString('id-ID')}`}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                    }
-                  }}
-                >
-                  <article className="h-full">
-                    <div className="relative p-4 pb-0">
+              <AnimatePresence>
+                {(products || []).map((product, index) => (
+                  <motion.div
+                    key={product.uuid}
+                    layout
+                    initial={{ opacity: 0, y: 40, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                    transition={{
+                      duration: 0.6,
+                      delay: index * 0.1,
+                      ease: [0.22, 1, 0.36, 1]
+                    }}
+                    whileHover={{
+                      y: -12,
+                      transition: { duration: 0.3, ease: "easeOut" }
+                    }}
+                    className="group relative"
+                  >
+                    <Link
+                      href={`/produk/${product.uuid}`}
+                      className="block h-full"
+                      aria-label={`Lihat detail produk ${product.name}`}
+                    >
                       <div
-                        className="w-full h-48 rounded-lg bg-gradient-to-br from-amber-600 to-amber-800 mb-4 overflow-hidden"
-                        style={{
-                          backgroundImage: "repeating-linear-gradient(45deg, #92400e 0px, #92400e 4px, #f59e0b 4px, #f59e0b 8px)",
-                          backgroundSize: "16px 16px"
-                        }}
+                        className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-2xl border border-white/20 overflow-hidden hover:border-white/40 transition-all duration-500 cursor-pointer h-full group-hover:shadow-2xl group-hover:shadow-white/10"
+                        role="gridcell"
+                        tabIndex={0}
+                        aria-label={`Produk batik ${product.name}, kategori ${product.product_type}, harga Rp${product.price.toLocaleString('id-ID')}`}
                       >
-                        <div className="w-full h-full bg-black bg-opacity-10">
-                          <Image
-                            src={product.thumbnails[0]?.thumbnail_url}
-                            alt={`Motif batik ${product.name} - ${product.description}`}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement;
-                              target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMzc0MTUxIi8+CjxwYXRoIGQ9Ik0xNTAgMTAwTDEzMCA4MEgxNzBMMTUwIDEwMFoiIGZpbGw9IiM2QjcyODAiLz4KPHN2Zz4K';
-                            }}
-                          />
-                        </div>
+                        <article className="h-full flex flex-col">
+                          <div className="relative overflow-hidden">
+                            <div className="aspect-[4/3] relative bg-gradient-to-br from-gray-800 to-gray-900">
+                              <Image
+                                src={product.thumbnails[0]?.thumbnail_url}
+                                alt={`Motif batik ${product.name} - ${product.description}`}
+                                className="object-cover"
+                                width={500}
+                                height={300}
+                              />
+
+                              <div className="absolute top-4 left-4 z-50 bg-gradient-to-r from-blue-500/90 to-purple-500/90 backdrop-blur-sm text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/20">
+                                <p>{product.product_type}</p>
+                              </div>
+
+                              {product.stock <= 5 && (
+                                <div className="absolute bottom-4 left-4">
+                                  <span className="bg-gradient-to-r from-orange-500/90 to-red-500/90 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full border border-white/20">
+                                    Stok Terbatas: {product.stock}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="p-6 flex-1 flex flex-col">
+                            <h3 className="text-xl font-bold text-white mb-2 line-clamp-1 group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 group-hover:bg-clip-text transition-all duration-300">
+                              {product.name}
+                            </h3>
+
+                            <p className="text-gray-400 text-sm mb-6 line-clamp-2 leading-relaxed">
+                              {product.description}
+                            </p>
+
+                            <div className="flex items-center justify-between mb-6">
+                              <div className="flex items-center gap-1" role="group" aria-label="Rating 4.5 dari 5 bintang">
+                                <div className="flex items-center gap-0.5">
+                                  {[...Array(5)].map((_, i) => (
+                                    <Star
+                                      key={i}
+                                      size={14}
+                                      className={`${i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`}
+                                      aria-hidden="true"
+                                    />
+                                  ))}
+                                </div>
+                                <span className="text-sm font-medium text-gray-300 ml-1">4.5</span>
+                              </div>
+
+                              <div className="flex items-center gap-1 text-gray-400" role="group" aria-label={`${Math.floor(Math.random() * 1000) + 100} unduhan`}>
+                                <Download size={14} aria-hidden="true" />
+                                <span className="text-sm">{Math.floor(Math.random() * 1000) + 100}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-end justify-between mt-auto">
+                              <div>
+                                <div className="text-2xl font-bold text-white" aria-label={`Harga: Rp${product.price.toLocaleString('id-ID')}`}>
+                                  Rp{product.price.toLocaleString('id-ID')}
+                                </div>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  Stock: {product.stock} tersisa
+                                </p>
+                              </div>
+                              <HoverBorderGradient
+                                containerClassName="rounded-xl"
+                                as="button"
+                                className="bg-black text-white flex items-center justify-center gap-2 px-4 py-3 font-semibold text-sm border border-white"
+                                aria-label="Beli produk sekarang"
+                              >
+                                <ShoppingCart size={16} />
+                                Beli Sekarang
+                              </HoverBorderGradient>
+                            </div>
+                          </div>
+                        </article>
                       </div>
-                    </div>
-                    <div className="p-4 pt-0 text-white">
-                      <div className="flex justify-between items-start mb-3">
-                        <h3 className="text-lg font-bold truncate flex-1 mr-2">{product.name}</h3>
-                        <span
-                          className="bg-gray-800 text-white text-xs px-2 py-1 rounded-full flex-shrink-0"
-                          aria-label={`Tipe produk: ${product.product_type}`}
-                        >
-                          {product.product_type}
-                        </span>
-                      </div>
-                      <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                        {product.description}
-                      </p>
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-1" role="group" aria-label="Rating 4.5 dari 5 bintang">
-                          <Star size={16} className="text-yellow-500 fill-yellow-500" aria-hidden="true" />
-                          <span className="text-sm font-medium" aria-label="Rating: 4.5">
-                            4.5
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1 text-gray-400" role="group" aria-label={`${Math.floor(Math.random() * 1000) + 100} unduhan`}>
-                          <Download size={16} aria-hidden="true" />
-                          <span className="text-sm">{Math.floor(Math.random() * 1000) + 100}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-xl font-bold" aria-label={`Harga: Rp${product.price.toLocaleString('id-ID')}`}>
-                            Rp{product.price.toLocaleString('id-ID')}
-                          </span>
-                          <p className="text-xs text-gray-400 mt-1">
-                            Stock: {product.stock}
-                          </p>
-                        </div>
-                        <Link href="/" aria-label="Button beli produk" className="w-full flex justify-end">
-                          <HoverBorderGradient
-                            containerClassName="rounded-lg"
-                            as="button"
-                            className="bg-black text-white flex items-center justify-center space-x-2 border cursor-pointer px-4 sm:px-5 py-3 w-full sm:w-auto"
-                            aria-label="Tombol menuju page deteksi"
-                          >
-                            <p className="font-bold text-sm md:text-base">Beli Produk</p>
-                          </HoverBorderGradient>
-                        </Link>
-                      </div>
-                    </div>
-                  </article>
-                </motion.div>
-              ))}
+                    </Link>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
 
             {totalItems > 0 && (
-              <div className="p-4 flex items-center justify-between border-t border-gray-600 mt-8" role="navigation" aria-label="Navigasi halaman">
-                <div className="text-sm text-gray-400">
-                  Halaman <strong>{currentPage}</strong> dari <strong>{Math.max(1, totalPages)}</strong>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="mt-16 flex items-center justify-center gap-8"
+                role="navigation"
+                aria-label="Navigasi halaman"
+              >
+                <div className="flex items-center gap-4">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage <= 1 || loading}
-                    className="flex items-center justify-center w-8 h-8 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center justify-center w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    <ChevronLeft size={16} />
-                  </button>
-                  <span className="text-sm font-medium text-gray-400 px-2">
-                    {currentPage}
-                  </span>
-                  <button
+                    <ChevronLeft size={20} />
+                  </motion.button>
+
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else {
+                        const start = Math.max(1, currentPage - 2);
+                        const end = Math.min(totalPages, start + 4);
+                        pageNum = start + i;
+                        if (pageNum > end) return null;
+                      }
+
+                      return (
+                        <motion.button
+                          key={pageNum}
+                          className={`w-12 h-12 rounded-xl font-medium transition-all duration-300 ${currentPage === pageNum
+                            ? 'bg-white text-black border-2 border-white shadow-lg'
+                            : 'bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/40'
+                            }`}
+                        >
+                          {pageNum}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage >= totalPages || totalPages <= 1 || loading}
-                    className="flex items-center justify-center w-8 h-8 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center justify-center w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    <ChevronRight size={16} />
-                  </button>
+                    <ChevronRight size={20} />
+                  </motion.button>
                 </div>
-              </div>
+              </motion.div>
             )}
           </div>
         )}

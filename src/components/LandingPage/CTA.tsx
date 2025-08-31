@@ -119,9 +119,9 @@ const FiturUnggulan = () => {
     ];
 
     return (
-        <div ref={containerRef} className="pt-86">
+        <div ref={containerRef} className="pt-70">
             <div ref={heroRef} className="flex items-center justify-center px-4">
-                <div className="text-center max-w-7xl mx-auto pb-20">
+                <div className="text-center max-w-7xl mx-auto pb-15">
                     <h1 className="hero-title text-3xl md:text-6xl font-bold text-white mb-6">
                         Coba Fitur RagaMaya Sekarang
                     </h1>

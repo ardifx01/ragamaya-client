@@ -153,15 +153,33 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                 url: url,
                 headers: { Authorization: `Bearer ${Cookies.get("access_token")}` },
                 onload: (response: any): string => {
-                    const res = JSON.parse(response);
-                    const fileResult = res.body[0];
-                    if (fileResult.status === "success" && fileResult.result?.public_url) {
-                        return fileResult.result.public_url;
+                    try {
+                        const res = JSON.parse(response);
+
+                        if (type === 'digitalFile') {
+                            const fileResult = res.body;
+                            // SOLUSI: Cukup periksa apakah `public_url` ada.
+                            if (fileResult?.public_url) {
+                                return fileResult.public_url;
+                            }
+                        } else { // Logika untuk thumbnail sudah benar
+                            const fileResult = res.body[0];
+                            if (fileResult.status === "success" && fileResult.result?.public_url) {
+                                return fileResult.result.public_url;
+                            }
+                        }
+
+                        // Jika gagal pada salah satu kondisi di atas, log error
+                        console.error(`Gagal mendapatkan public_url untuk tipe '${type}':`, res);
+                        return '';
+
+                    } catch (e) {
+                        console.error("Gagal mem-parsing JSON dari server:", e);
+                        return '';
                     }
-                    return '';
                 },
             },
-            revert: null, // Kita handle revert/delete di onremovefile
+            revert: null,
         };
     };
 
@@ -239,7 +257,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                                 name="file"
                                 labelIdle='Drag & Drop file digital atau <span class="filepond--label-action">Browse</span>'
                                 onprocessfile={(error, file) => {
-                                    if (error) { console.error('Upload file digital error:', error); return; }
+                                    if (error) { console.error('Upload thumbnail error:', error); return; }
                                     const serverId = file.serverId; // Ini adalah public_url
                                     if (serverId) {
                                         setUploadedDigitalFiles(prev => [

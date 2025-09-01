@@ -252,7 +252,7 @@ const ProductTable: React.FC = () => {
         }
     }
 
-    const handleCallbackAddProduct = React.useCallback(async () => {
+    const handleCallbackProduct = React.useCallback(async () => {
         await loadData(currentPage);
     }, [currentPage, loadData]);
 
@@ -338,7 +338,7 @@ const ProductTable: React.FC = () => {
                 onOpen={addModal.onOpen}
                 onOpenChange={addModal.onOpenChange}
                 onClose={addModal.onClose}
-                onSubmitSuccess={handleCallbackAddProduct}
+                onSubmitSuccess={handleCallbackProduct}
             />
 
             <EditProductModal
@@ -347,6 +347,7 @@ const ProductTable: React.FC = () => {
                 onOpen={editModal.onOpen}
                 onOpenChange={editModal.onOpenChange}
                 onClose={editModal.onClose}
+                onSubmitSuccess={handleCallbackProduct}
             />
 
             <MyModal title="Hapus Produk" onOpen={deleteModal.onOpen} isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onOpenChange}>

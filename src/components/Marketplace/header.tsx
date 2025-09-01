@@ -1,8 +1,10 @@
 import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
-import { Input, Select, SelectItem } from "@heroui/react";
+import {Input, modal, Select, SelectItem, useDisclosure} from "@heroui/react";
 import { Search, Store, ChevronDown, Funnel } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
+import ModalRegisterSeller from "@/components/ui/modal/ModalRegisterSeller";
+import {GetUserData, isUserLoggedIn} from "@/lib/GetUserData";
 
 export const categories = [
     { key: "semua", label: "Semua" },
@@ -24,7 +26,10 @@ export const priceRanges = [
 ];
 
 const Header = () => {
-    return (
+    const userData = GetUserData();
+    const modalRegisterSeller = useDisclosure()
+
+    return <>
         <div className="px-4 pt-28">
             <div className="max-w-7xl w-full mx-auto">
                 <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-6 pt-8 lg:pt-16">
@@ -63,24 +68,32 @@ const Header = () => {
                         </motion.p>
                     </motion.div>
 
-                    <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-                        className="flex justify-center lg:justify-end"
-                    >
-                        <Link href="#" aria-label="Menjadi penjual batik">
-                            <HoverBorderGradient
-                                containerClassName="rounded-lg"
-                                as="button"
-                                className="bg-black text-white flex items-center space-x-2 border cursor-pointer px-6 py-3"
-                                aria-label="Tombol untuk menjadi penjual"
-                            >
-                                <Store size={20} className="md:w-6 md:h-6" aria-hidden="true" />
-                                <span className="font-bold text-sm md:text-lg">Jadilah Penjual</span>
-                            </HoverBorderGradient>
-                        </Link>
-                    </motion.div>
+                    {isUserLoggedIn() && userData.role !== 'seller' && (
+                        <motion.div
+                            initial={{ opacity: 0, x: 50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+                            className="flex justify-center lg:justify-end"
+                        >
+                            <Link
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    modalRegisterSeller.onOpen()
+                                }}
+                                href="#"
+                                aria-label="Menjadi penjual batik">
+                                <HoverBorderGradient
+                                    containerClassName="rounded-lg"
+                                    as="button"
+                                    className="bg-black text-white flex items-center space-x-2 border cursor-pointer px-6 py-3"
+                                    aria-label="Tombol untuk menjadi penjual"
+                                >
+                                    <Store size={20} className="md:w-6 md:h-6" aria-hidden="true" />
+                                    <span className="font-bold text-sm md:text-lg">Jadilah Penjual</span>
+                                </HoverBorderGradient>
+                            </Link>
+                        </motion.div>
+                    )}
                 </div>
 
                 <motion.div
@@ -197,7 +210,13 @@ const Header = () => {
                 </motion.div>
             </div>
         </div>
-    )
+        <ModalRegisterSeller
+            isOpen={modalRegisterSeller.isOpen}
+            onOpen={modalRegisterSeller.onOpen}
+            onOpenChange={modalRegisterSeller.onOpenChange}
+            onClose={modalRegisterSeller.onClose}
+        />
+    </>
 }
 
 export default Header

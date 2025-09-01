@@ -1,6 +1,7 @@
 'use client'
 
 import Header from "@/components/PaymentHistory/Header"
+import Payments from "@/components/PaymentHistory/Payment";
 import { PaymentStatusType } from "@/types/payment_history_type";
 import React, { useState } from "react";
 
@@ -12,6 +13,9 @@ const PaymentHistoryPage = () => {
             <Header
                 Status={statusType}
                 onStatusChange={setStatusType}
+            />
+            <Payments
+                StatusType={statusType}
             />
         </div>
     )

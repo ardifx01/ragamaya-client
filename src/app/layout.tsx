@@ -36,7 +36,9 @@ export default function RootLayout({
       >
         <Providers>
           <MainNavbar />
-          {children}
+          <div className="min-h-screen">
+            {children}-
+          </div>
           <Footer />
         </Providers>
       </body>

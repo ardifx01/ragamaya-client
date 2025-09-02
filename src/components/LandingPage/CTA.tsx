@@ -94,9 +94,9 @@ const FiturUnggulan = () => {
     const features = [
         {
             icon: Camera,
-            title: 'Deteksi Motif AI',
+            title: 'Detection Motif AI',
             description: 'Unggah foto batik dan dapatkan informasi detail tentang motif, asal daerah, dan maknanya',
-            page: 'deteksi'
+            page: 'detection'
         },
         {
             icon: BookOpen,

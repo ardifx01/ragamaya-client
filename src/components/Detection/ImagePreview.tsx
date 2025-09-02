@@ -6,6 +6,7 @@ interface ImagePreviewProps {
   selectedImage: string;
   onAnalyze: () => void;
   onReset: () => void;
+  isDisabled?: boolean;
   isAnalyzing?: boolean;
 }
 
@@ -13,6 +14,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   selectedImage,
   onAnalyze,
   onReset,
+  isDisabled = false,
   isAnalyzing = false
 }) => {
   return (
@@ -28,7 +30,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
         <Button
           onPress={onAnalyze}
-          disabled={isAnalyzing}
+          disabled={isAnalyzing || isDisabled}
           className="flex text-md items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-6 px-6 rounded-xl transition-all duration-300 hover:scale-105"
         >
           <Sparkles size={20} className="mt-0.5" />

@@ -17,6 +17,7 @@
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.11.0",
     "clsx": "^2.1.1",
+    "event-source-polyfill": "^1.0.31",
     "filepond-plugin-file-validate-size": "^2.2.8",
     "filepond-plugin-file-validate-type": "^1.2.9",
     "filepond-plugin-image-exif-orientation": "^1.0.11",

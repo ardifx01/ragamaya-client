@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { HoverBorderGradient } from '@/components/ui/hover-border-gradient';
 
 interface DigitalFile {
-    file_url: string;
     description: string;
     extension: string;
 }
@@ -195,7 +194,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 </div>
             </div>
 
-            {product.digital_files.length > 0 && (
+            {product.digital_files?.length > 0 && (
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

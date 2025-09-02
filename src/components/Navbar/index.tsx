@@ -354,7 +354,7 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
                   </Link>
 
                   <Link
-                    href="/histori"
+                    href="/payment/history"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="text-gray-300 hover:text-white transition-colors duration-200 py-2 block text-md mt-3"
                   >

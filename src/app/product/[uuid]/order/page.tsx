@@ -1,5 +1,6 @@
 'use client'
 
+import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Image, addToast } from '@heroui/react';
@@ -42,6 +43,7 @@ const Page = () => {
     const params = useParams();
     const router = useRouter();
     const searchParams = useSearchParams();
+    const isLoggedIn = Cookies.get('access_token');
 
     const [prevData, setPrevData] = useState<OrderData | null>(null);
     const [product, setProduct] = useState(null);

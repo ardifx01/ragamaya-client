@@ -11,7 +11,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const MainContent = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -28,16 +28,13 @@ const MainContent = () => {
   const cameraSectionRef = useRef<HTMLDivElement>(null);
 
   const handleFileSelect = useCallback((file: File) => {
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (file && file.type.startsWith("image/")) {
+      setSelectedImage(file);
     } else {
-      alert('Harap pilih file gambar yang valid (JPG, PNG, WebP)');
+      alert("Harap pilih file gambar yang valid (JPG, PNG, WebP)");
     }
   }, []);
+
 
   const features = [
     {
@@ -102,19 +99,26 @@ const MainContent = () => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      const context = canvas.getContext('2d');
+      const context = canvas.getContext("2d");
 
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
 
       if (context) {
         context.drawImage(video, 0, 0);
-        const imageData = canvas.toDataURL('image/jpeg', 0.8);
-        setSelectedImage(imageData);
+
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], "capture.jpg", { type: "image/jpeg" });
+            setSelectedImage(file);
+          }
+        }, "image/jpeg", 0.8);
+
         closeCamera();
       }
     }
   }, [closeCamera]);
+
 
   const handleAnalyze = useCallback(() => {
     setIsAnalyzing(true);
@@ -295,13 +299,14 @@ const MainContent = () => {
       {selectedImage && (
         <div ref={previewSectionRef}>
           <ImagePreview
-            selectedImage={selectedImage}
+            selectedImage={URL.createObjectURL(selectedImage)}
             onAnalyze={handleAnalyze}
             onReset={resetDetection}
             isAnalyzing={isAnalyzing}
           />
         </div>
       )}
+
 
       <div ref={featuresRef} className="grid md:grid-cols-3 gap-8 p-8 bg-gray-50">
         {features.map((feature, index) => (

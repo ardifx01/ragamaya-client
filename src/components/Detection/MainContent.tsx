@@ -7,21 +7,49 @@ import CameraCapture from './CameraCaptute';
 import { Sparkles, Target, Upload } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import RequestAPI from '@/helper/http';
+import AnalysisResults from './AnalyzeResult';
+import { set } from 'zod';
 
 gsap.registerPlugin(ScrollTrigger);
+
+interface AlternativePattern {
+  pattern: string;
+  code: string;
+  score: number;
+  match: "high" | "medium" | "low";
+}
+
+interface AnalyzeResponse {
+  pattern: string;
+  origin: string;
+  description: string;
+  history: string;
+  score: number;
+  match: "high" | "medium" | "low";
+  alternative: AlternativePattern[];
+}
+
+interface ApiResponse {
+  status: number;
+  message: string;
+  body: AnalyzeResponse;
+}
+
 
 const MainContent = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResults, setAnalysisResults] = useState(null);
+  const [analysisResults, setAnalysisResults] = useState<AnalyzeResponse | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const resultsSectionRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const uploadSectionRef = useRef<HTMLDivElement>(null);
   const previewSectionRef = useRef<HTMLDivElement>(null);
@@ -119,13 +147,24 @@ const MainContent = () => {
     }
   }, [closeCamera]);
 
+  const fetchAnalyze = async () => {
+    if (!selectedImage) {
+      return { status: 400, message: "No image selected", body: {} as AnalyzeResponse };
+    }
 
-  const handleAnalyze = useCallback(() => {
-    setIsAnalyzing(true);
-    setTimeout(() => {
-      setIsAnalyzing(false);
-    }, 3000);
-  }, []);
+    const formData = new FormData();
+    formData.append('file', selectedImage);
+
+    setIsAnalyzing(true)
+    const res: ApiResponse = await RequestAPI('/predict/analyze', 'post', formData);
+    if (res.body) {
+      setAnalysisResults(res.body);
+    } else {
+      alert(res.message);
+      setAnalysisResults(null);
+    }
+    setIsAnalyzing(false)
+  };
 
   const resetDetection = useCallback(() => {
     setSelectedImage(null);
@@ -272,57 +311,71 @@ const MainContent = () => {
   }, [isCameraOpen]);
 
   return (
-    <div
-      ref={containerRef}
-      className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 overflow-hidden"
-    >
-      {!selectedImage && !isCameraOpen && (
-        <div ref={uploadSectionRef}>
-          <ImageUpload
-            onFileSelect={handleFileSelect}
-            onCameraOpen={openCamera}
-          />
-        </div>
-      )}
-
-      {isCameraOpen && (
-        <div ref={cameraSectionRef}>
-          <CameraCapture
-            videoRef={videoRef}
-            onCapture={capturePhoto}
-            onClose={closeCamera}
-          />
-          <canvas ref={canvasRef} className="hidden" />
-        </div>
-      )}
-
-      {selectedImage && (
-        <div ref={previewSectionRef}>
-          <ImagePreview
-            selectedImage={URL.createObjectURL(selectedImage)}
-            onAnalyze={handleAnalyze}
-            onReset={resetDetection}
-            isAnalyzing={isAnalyzing}
-          />
-        </div>
-      )}
-
-
-      <div ref={featuresRef} className="grid md:grid-cols-3 gap-8 p-8 bg-gray-50">
-        {features.map((feature, index) => (
-          <div key={index} className="text-center group feature-card cursor-pointer">
-            <div className={`bg-gradient-to-br ${feature.gradient} rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 transition-all duration-300`}>
-              <feature.icon className="h-8 w-8 text-white feature-icon" />
-            </div>
-            <h3 className="font-semibold text-gray-800 mb-2 transition-colors duration-300">
-              {feature.title}
-            </h3>
-            <p className="text-gray-600 text-sm leading-relaxed transition-colors duration-300 group-hover:text-gray-700">
-              {feature.description}
-            </p>
+    <div>
+      <div
+        ref={containerRef}
+        className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 overflow-hidden"
+      >
+        {!selectedImage && !isCameraOpen && (
+          <div ref={uploadSectionRef}>
+            <ImageUpload
+              onFileSelect={handleFileSelect}
+              onCameraOpen={openCamera}
+            />
           </div>
-        ))}
+        )}
+
+        {isCameraOpen && (
+          <div ref={cameraSectionRef}>
+            <CameraCapture
+              videoRef={videoRef}
+              onCapture={capturePhoto}
+              onClose={closeCamera}
+            />
+            <canvas ref={canvasRef} className="hidden" />
+          </div>
+        )}
+
+        {selectedImage && (
+          <div ref={previewSectionRef}>
+            <ImagePreview
+              selectedImage={URL.createObjectURL(selectedImage)}
+              onAnalyze={fetchAnalyze}
+              onReset={resetDetection}
+              isDisabled={analysisResults !== null}
+              isAnalyzing={isAnalyzing}
+            />
+          </div>
+        )}
+
+
+        <div ref={featuresRef} className="grid md:grid-cols-3 gap-8 p-8 bg-gray-50">
+          {features.map((feature, index) => (
+            <div key={index} className="text-center group feature-card cursor-pointer">
+              <div className={`bg-gradient-to-br ${feature.gradient} rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 transition-all duration-300`}>
+                <feature.icon className="h-8 w-8 text-white feature-icon" />
+              </div>
+              <h3 className="font-semibold text-gray-800 mb-2 transition-colors duration-300">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed transition-colors duration-300 group-hover:text-gray-700">
+                {feature.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
       </div>
+
+      {analysisResults && (
+        <div ref={resultsSectionRef}>
+          <AnalysisResults
+            results={analysisResults}
+            imageUrl={selectedImage ? URL.createObjectURL(selectedImage) : undefined}
+            onClose={resetDetection}
+          />
+        </div>
+      )}
     </div>
   );
 };

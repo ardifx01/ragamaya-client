@@ -48,6 +48,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     const handleQuantityChange = (newQuantity: number): void => {
         if (!product) return;
 
+        if (product.product_type === 'digital' && newQuantity > 1) {
+            setQuantity(1);
+            setError('Produk digital hanya dapat dibeli 1 pcs');
+            return;
+        }
+
         if (newQuantity < 1) {
             setQuantity(1);
         } else if (newQuantity > product.stock) {
@@ -72,6 +78,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
     const validateOrder = (): boolean => {
         if (!product) {
             setError('Data produk tidak tersedia');
+            return false;
+        }
+
+        if (product.product_type === 'digital' && quantity > 1) {
+            setError('Produk digital hanya dapat dibeli 1 pcs');
             return false;
         }
 
@@ -118,7 +129,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
             };
 
             const secdat = btoa(JSON.stringify(orderData));
-            router.push(`/produk/${product.uuid}/order?secdat=${secdat}`);
+            router.push(`/product/${product.uuid}/order?secdat=${secdat}`);
 
         } catch (error) {
             console.error('Error creating order data:', error);
@@ -171,7 +182,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                     <div className="flex items-center gap-1">
                         {renderStarRating()}
                     </div>
-                    <span className="text-gray-400">(128 ulasan)</span>
+                    <span className="text-gray-400 font-semibold">(4.8/5)</span>
                 </div>
                 <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent leading-tight">
                     {product.name}
@@ -257,7 +268,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                                 onChange={(e) => handleQuantityInputChange(e.target.value)}
                                 className="w-24 h-12 text-center bg-white/10 border border-white/20 rounded-xl text-white font-semibold focus:border-white/40 focus:outline-none transition-colors duration-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 min="1"
-                                max={product.stock}
+                                max={product.product_type === 'digital' ? 1 : product.stock}
                                 aria-label="Product quantity"
                             />
                         </div>

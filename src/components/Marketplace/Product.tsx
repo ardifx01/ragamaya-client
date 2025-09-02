@@ -180,7 +180,7 @@ const Product: React.FC<ProductProps> = ({
                     className="group relative"
                   >
                     <Link
-                      href={`/produk/${product.uuid}`}
+                      href={`/product/${product.uuid}`}
                       className="block h-full"
                       aria-label={`Lihat detail produk ${product.name}`}
                     >

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Image } from '@heroui/react';
-import { ChevronRight, Store, Heart, Share2 } from 'lucide-react';
+import { ChevronRight, Store, Share2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import ProductDetail from './ProductDetail';
@@ -41,14 +41,10 @@ const ProductImage: React.FC<ProductImageProps> = ({
     isLoggedIn,
     onLoginRequired
 }) => {
-    // State management
     const [selectedThumbnail, setSelectedThumbnail] = useState<number>(0);
     const [isImageZoomed, setIsImageZoomed] = useState<boolean>(false);
-    const [isFavorite, setIsFavorite] = useState<boolean>(false);
+    
 
-    /**
-     * Handle sharing product
-     */
     const handleShare = async (): Promise<void> => {
         const shareData = {
             title: product.name,
@@ -60,14 +56,11 @@ const ProductImage: React.FC<ProductImageProps> = ({
             if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
                 await navigator.share(shareData);
             } else {
-                // Fallback to clipboard
                 await navigator.clipboard.writeText(window.location.href);
-                // You could add a toast notification here
                 console.log('Link copied to clipboard');
             }
         } catch (error) {
             console.error('Error sharing:', error);
-            // Fallback to clipboard
             try {
                 await navigator.clipboard.writeText(window.location.href);
                 console.log('Link copied to clipboard');
@@ -77,16 +70,10 @@ const ProductImage: React.FC<ProductImageProps> = ({
         }
     };
 
-    /**
-     * Handle thumbnail selection
-     */
     const handleThumbnailSelect = (index: number): void => {
         setSelectedThumbnail(index);
     };
 
-    /**
-     * Navigate to previous image in zoom modal
-     */
     const navigateToPreviousImage = (): void => {
         setSelectedThumbnail(
             selectedThumbnail > 0
@@ -95,9 +82,6 @@ const ProductImage: React.FC<ProductImageProps> = ({
         );
     };
 
-    /**
-     * Navigate to next image in zoom modal
-     */
     const navigateToNextImage = (): void => {
         setSelectedThumbnail(
             selectedThumbnail < product.thumbnails.length - 1
@@ -108,7 +92,6 @@ const ProductImage: React.FC<ProductImageProps> = ({
 
     return (
         <>
-            {/* Breadcrumb Navigation */}
             <motion.nav
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -128,21 +111,7 @@ const ProductImage: React.FC<ProductImageProps> = ({
                     </span>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex items-center gap-3">
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setIsFavorite(!isFavorite)}
-                        className={`p-3 rounded-full backdrop-blur-sm border border-white/10 transition-all duration-300 ${isFavorite
-                            ? 'bg-red-500/20 text-red-400 border-red-400/30'
-                            : 'bg-white/5 text-gray-400 hover:text-red-400 hover:border-red-400/30'
-                            }`}
-                        aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-                    >
-                        <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
-                    </motion.button>
-
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -171,7 +140,7 @@ const ProductImage: React.FC<ProductImageProps> = ({
                             <Image
                                 src={product.thumbnails[selectedThumbnail]?.thumbnail_url}
                                 alt={`${product.name} - Motif ${selectedThumbnail + 1}`}
-                                className="w-full h-full object-cover"
+                                className=" object-cover md:h-[610px]"
                                 width={620}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -236,13 +205,13 @@ const ProductImage: React.FC<ProductImageProps> = ({
                                 e.stopPropagation();
                                 setIsImageZoomed(false);
                             }}
-                            className="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20 transition-all duration-300 z-10"
+                            className="absolute top-30 md:top-2 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20 transition-all duration-300 z-50"
+                            style={{
+                                zIndex: 9999
+                            }}
                             aria-label="Close image zoom"
                         >
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
+                            <X size={24} className="text-white" />
                         </motion.button>
                         <motion.div
                             initial={{ scale: 0.8, opacity: 0 }}
@@ -276,7 +245,7 @@ const ProductImage: React.FC<ProductImageProps> = ({
                                             e.stopPropagation();
                                             navigateToPreviousImage();
                                         }}
-                                        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20 transition-all duration-300"
+                                        className="absolute left-4 z-50 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20 transition-all duration-300"
                                         aria-label="Previous image"
                                     >
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
@@ -291,7 +260,7 @@ const ProductImage: React.FC<ProductImageProps> = ({
                                             e.stopPropagation();
                                             navigateToNextImage();
                                         }}
-                                        className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20 transition-all duration-300"
+                                        className="absolute right-4 z-50 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20 transition-all duration-300"
                                         aria-label="Next image"
                                     >
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">

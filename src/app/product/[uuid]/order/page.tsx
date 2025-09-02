@@ -1,6 +1,5 @@
 'use client'
 
-import Cookies from 'js-cookie';
 import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Image, addToast } from '@heroui/react';
@@ -22,8 +21,6 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Loading from '@/components/Loading';
-import { GetUserData } from '@/lib/GetUserData';
-import { BASE_API } from '@/lib/environtment';
 import RequestAPI from '@/helper/http';
 import PaymentOptions from '@/components/Payments/PaymentOptions';
 import { HoverBorderGradient } from '@/components/ui/hover-border-gradient';
@@ -45,21 +42,20 @@ const Page = () => {
     const params = useParams();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const isLoggedIn = Cookies.get('access_token');
 
     const [prevData, setPrevData] = useState<OrderData | null>(null);
     const [product, setProduct] = useState(null);
+    const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isOrdering, setIsOrdering] = useState(false);
     const [timeLeft, setTimeLeft] = useState(300);
 
-    const userData = GetUserData();
     const secdat = searchParams.get('secdat');
 
     const parseSecdat = async () => {
         try {
             if (!secdat) {
-                router.push(`/produk/${params.uuid}`);
+                router.push(`/product/${params.uuid}`);
                 return;
             }
 
@@ -75,7 +71,7 @@ const Page = () => {
                 color: "danger"
             });
             console.error(err);
-            router.push(`/produk/${params.uuid}`);
+            router.push(`/product/${params.uuid}`);
         }
     };
 
@@ -108,7 +104,7 @@ const Page = () => {
                 description: "Waktu pembayaran telah berakhir, silakan ulangi proses pemesanan.",
                 color: "danger"
             });
-            router.push(`/produk/${params.uuid}`);
+            router.push(`/product/${params.uuid}`);
         }
 
         const timer = setInterval(() => {
@@ -127,6 +123,14 @@ const Page = () => {
             });
             return;
         }
+        if (!selectedPayment) {
+            addToast({
+                title: "Pilih metode pembayaran terlebih dahulu",
+                description: "Data pesanan tidak valid, silakan coba lagi.",
+                color: "danger"
+            });
+            return;
+        }
 
         try {
             setIsOrdering(true);
@@ -136,34 +140,21 @@ const Page = () => {
                 quantity: prevData.quantity,
             };
 
-            const response = await fetch(BASE_API + '/order/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
+            const response = await RequestAPI(`/order/create/${selectedPayment}`, 'post', payload);
 
-            const data = await response.json();
-            if (response.ok) {
+            if (response) {
                 addToast({
                     title: "Pesanan berhasil dibuat!",
                     description: "Anda akan dialihkan ke halaman pembayaran.",
                     color: "success"
                 });
-                router.push(`/orders/success?order_id=${data.body.order_id}`);
-            } else {
-                addToast({
-                    title: "Gagal membuat pesanan",
-                    description: data.message || "Terjadi kesalahan saat membuat pesanan, silakan coba lagi.",
-                    color: "danger"
-                });
+                router.push(`/payment/${response.body.uuid}`);
             }
         } catch (error) {
             console.error(error);
             addToast({
-                title: "Kesalahan jaringan",
-                description: "Terjadi kesalahan saat menghubungi server, silakan periksa koneksi internet Anda.",
+                title: "Gagal membuat pesanan",
+                description: error.message || "Terjadi kesalahan saat membuat pesanan, silakan coba lagi.",
                 color: "danger"
             });
         } finally {
@@ -193,17 +184,19 @@ const Page = () => {
                         <Store size={40} className="text-white" />
                     </div>
                     <h2 className="text-3xl font-bold text-white mb-4">Data Pesanan Tidak Valid</h2>
-                    <p className="text-gray-400 mb-8 leading-relaxed">
+                    <p className="text-gray-400 mb-4 leading-relaxed">
                         Terjadi kesalahan saat memuat data pesanan Anda
                     </p>
-                    <HoverBorderGradient
-                        containerClassName="rounded-xl"
-                        as="button"
-                        className="bg-black text-white px-8 py-4 font-medium"
-                        onClick={() => router.push('/')}
-                    >
-                        Kembali ke Beranda
-                    </HoverBorderGradient>
+                    <div className='flex justify-center'>
+                        <HoverBorderGradient
+                            containerClassName="rounded-xl"
+                            as="button"
+                            className="bg-black text-white px-8 py-4 font-medium text-center"
+                            onClick={() => router.push('/')}
+                        >
+                            Kembali ke Beranda
+                        </HoverBorderGradient>
+                    </div>
                 </motion.div>
             </div>
         );
@@ -256,7 +249,7 @@ const Page = () => {
                             </Link>
                             <ChevronRight size={16} className="mx-3 text-gray-500" />
                             <a
-                                href={`/produk/${params.uuid}`}
+                                href={`/product/${params.uuid}`}
                                 className="text-sm text-gray-300 hover:text-white transition-colors duration-300 max-w-32 lg:max-w-48 truncate"
                             >
                                 {prevData.product_name}
@@ -446,7 +439,7 @@ const Page = () => {
                                     <CreditCard size={24} className="mr-3 text-green-400" />
                                     Pilih Pembayaran
                                 </h3>
-                                <PaymentOptions />
+                                <PaymentOptions basePrice={prevData.total_price} value={selectedPayment} onChange={setSelectedPayment} />
                             </motion.div>
                         </div>
 

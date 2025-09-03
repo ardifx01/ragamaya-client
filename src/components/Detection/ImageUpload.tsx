@@ -55,24 +55,21 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onFileSelect, onCameraOpen })
     <div className="p-8">
       <div
         className={`border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 cursor-pointer group select-none
-        ${isDragging ? 'border-black bg-white' : 'border-gray-300 hover:border-black hover:bg-gray-50'}`}
+        ${isDragging ? 'border-black bg-white' : 'border-gray-300 hover:border-black hover:bg-gray-300'}`}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
       >
-        {/* IKON dropzone ikut state */}
         <Upload
           className={`mx-auto h-16 w-16 mb-4 transition-colors
           ${isDragging ? 'text-black' : 'text-gray-400 group-hover:text-black'}`}
         />
-
-        {/* Teks juga ikut state agar kontras */}
-        <h3 className={`text-xl font-semibold mb-2 ${isDragging ? 'text-black' : 'text-gray-700'}`}>
+        <h3 className={`text-xl font-semibold mb-2 transition-colors ${isDragging ? 'text-black' : 'text-gray-400 group-hover:text-black'}`}>
           Upload Gambar Batik Anda
         </h3>
-        <p className={`mb-4 transition-colors ${isDragging ? 'text-black' : 'text-gray-500 group-hover:text-black'}`}>
+        <p className={`mb-4 transition-colors ${isDragging ? 'text-black' : 'text-gray-400 group-hover:text-black'}`}>
           Drag dan drop gambar Batik di sini, atau klik untuk memilih file
         </p>
         <p className={`text-sm transition-colors ${isDragging ? 'text-black' : 'text-gray-400 group-hover:text-black'}`}>
@@ -91,16 +88,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ onFileSelect, onCameraOpen })
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
         <Button
           onPress={() => fileInputRef.current?.click()}
-          className="flex text-md items-center justify-center gap-2 bg-black text-white font-semibold py-6 px-8 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          className="flex text-md items-center justify-center gap-2 bg-black/30 hover:bg-white/20 text-white  font-semibold border border-white hover:border-white/40 py-6 px-8 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg"
         >
-          {/* ikon di tombol (opsional saja) */}
           <Upload className="h-5 w-5" />
           Pilih File
         </Button>
 
         <Button
           onPress={onCameraOpen}
-          className="flex text-md items-center justify-center gap-2 bg-black text-white font-semibold py-6 px-6 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          className="flex text-md items-center justify-center gap-2 bg-black/30 hover:bg-white/20 text-white  font-semibold border border-white hover:border-white/40 py-6 px-6 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg"
         >
           <Camera className="h-5 w-5" />
           Ambil Foto

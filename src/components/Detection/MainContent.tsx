@@ -314,7 +314,7 @@ const MainContent = () => {
     <div>
       <div
         ref={containerRef}
-        className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 overflow-hidden"
+        className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/20"
       >
         {!selectedImage && !isCameraOpen && (
           <div ref={uploadSectionRef}>
@@ -349,16 +349,16 @@ const MainContent = () => {
         )}
 
 
-        <div ref={featuresRef} className="grid md:grid-cols-3 gap-8 p-8 bg-gray-50">
+        <div ref={featuresRef} className="grid md:grid-cols-3 gap-8 p-8 ">
           {features.map((feature, index) => (
             <div key={index} className="text-center group feature-card cursor-pointer">
               <div className={`bg-gradient-to-br ${feature.gradient} rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 transition-all duration-300`}>
                 <feature.icon className="h-8 w-8 text-white feature-icon" />
               </div>
-              <h3 className="font-semibold text-gray-800 mb-2 transition-colors duration-300">
+              <h3 className="font-semibold text-gray-300 mb-2 transition-colors duration-300">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed transition-colors duration-300 group-hover:text-gray-700">
+              <p className="text-gray-300 text-sm leading-relaxed transition-colors duration-300 group-hover:text-gray-400">
                 {feature.description}
               </p>
             </div>

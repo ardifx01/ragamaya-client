@@ -38,7 +38,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
         </Button>
         <Button
           onPress={onReset}
-          className="flex text-md items-center justify-center gap-2 bg-black text-white font-semibold py-6 px-6 rounded-xl transition-all duration-300 hover:scale-105"
+          className="flex text-md items-center justify-center gap-2 bg-black/30 hover:bg-white/20 text-white font-semibold border border-white hover:border-white/40 py-6 px-6 rounded-xl transition-all duration-300 hover:scale-105"
         >
           <RotateCcw size={20} className="mt-0.5" />
           Upload Lagi

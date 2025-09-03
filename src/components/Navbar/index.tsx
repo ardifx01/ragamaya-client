@@ -78,7 +78,6 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
     { name: "Pengenalan AI", link: "/detection" },
     { name: "Edukasi", link: "/education" },
     { name: "Marketplace", link: "/marketplace" },
-    { name: "Forum", link: "/forum" },
   ];
 
   const menuItems = navItems.length > 0 ? navItems : defaultNavItems;

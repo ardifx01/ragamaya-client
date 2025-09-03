@@ -4,9 +4,9 @@ import { useState } from "react";
 import { Tabs, Tab } from "@heroui/react";
 import { BookOpen, Brain } from "lucide-react";
 import { motion } from "motion/react";
-import Header from "@/components/Edukasi/Header";
-import Article from "@/components/Edukasi/Article";
-import Quiz from "@/components/Edukasi/Quiz";
+import Header from "@/components/Education/Header";
+import Article from "@/components/Education/Article";
+import Quiz from "@/components/Education/Quiz";
 
 const Edukasi = () => {
     const [selectedLevel, setSelectedLevel] = useState("Semua Level");

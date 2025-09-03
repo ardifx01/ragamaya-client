@@ -1,15 +1,13 @@
-"use client"
-
 import Hero from "@/components/LandingPage/Hero";
 import LightRays from "@/components/ui/lightrays";
 import Fitur from "@/components/LandingPage/Fitur";
-import Hero1 from "@/components/LandingPage/Hero1";
+import CTA from "@/components/LandingPage/CTA";
+import FiturUnggulan from "@/components/LandingPage/FiturUnggulan";
 
-export default function NavbarDemo() {
+export default function LandingPage() {
   return (
-    <div>
-
-      <div style={{ width: '100%', height: '900px', position: 'absolute' }}>
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+      <div style={{ width: '100%', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 0 }}>
         <LightRays
           raysOrigin="top-center"
           raysColor="#6B6B6BFF"
@@ -18,16 +16,30 @@ export default function NavbarDemo() {
           rayLength={4}
           followMouse={true}
           mouseInfluence={0.1}
-          className="custom-rays top-0"
+          className="custom-rays"
         />
       </div>
 
-      <Hero1 />
+      <div className="relative z-10">
+        <section id="hero" className="min-h-screen">
+          <Hero />
+        </section>
 
-      <Fitur />
+        <div className="relative">
+          <div className="absolute left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        </div>
 
-      <div className="h-screen">
-        <h1></h1>
+        <section id="fitur" className="min-h-screen">
+          <Fitur />
+        </section>
+
+        <section id="fitur-unggulan" className="min-h-screen">
+          <FiturUnggulan />
+        </section>
+
+        <section id="cta" className="min-h-screen">
+          <CTA />
+        </section>
       </div>
     </div>
   );

@@ -8,11 +8,15 @@ import Footer from "@/components/Footer";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: 'swap', // Tambahkan ini
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: 'swap', // Tambahkan ini
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -28,11 +32,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-gradient-to-br from-gray-900 via-black to-gray-800`}
+        className={`${geistSans.variable} ${geistMono.variable} dark bg-gradient-to-br from-gray-900 via-black to-gray-800`}
       >
         <Providers>
           <MainNavbar />
-          {children}
+          <div className="min-h-screen">
+            {children}-
+          </div>
           <Footer />
         </Providers>
       </body>

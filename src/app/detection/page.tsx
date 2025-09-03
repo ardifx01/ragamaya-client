@@ -1,10 +1,10 @@
 'use client';
 
-import Header from '@/components/Deteksi/Header';
-import MainContent from '@/components/Deteksi/MainContent';
+import Header from '@/components/Detection/Header';
+import MainContent from '@/components/Detection/MainContent';
 import { motion } from "motion/react";
 
-const Deteksi = () => {
+const Detection = () => {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -35,4 +35,4 @@ const Deteksi = () => {
   );
 };
 
-export default Deteksi;
+export default Detection;

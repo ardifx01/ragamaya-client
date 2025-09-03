@@ -96,7 +96,7 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         minWidth: "900px",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-large border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md lg:flex",
+        "relative z-40 mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-large border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md lg:flex",
         className,
       )}
     >
@@ -159,7 +159,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         damping: 40,
       }}
       className={cn(
-        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between border border-white/10 bg-black/20 px-0 py-3 backdrop-blur-xl lg:hidden",
+        "relative z-40 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between border border-white/10 bg-black/20 px-0 py-3 backdrop-blur-xl lg:hidden",
         className,
       )}
     >
@@ -182,7 +182,7 @@ export const MobileNavMenu = ({ children, className, isOpen,  }: MobileNavMenuPr
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
           className={cn(
-            "absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-large border border-white/20 bg-black px-4 py-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4),_0_2px_8px_rgba(0,0,0,0.2),_0_0_0_1px_rgba(255,255,255,0.08),_inset_0_1px_0_rgba(255,255,255,0.1)]",
+            "absolute inset-x-0 top-16 z-40 flex w-full flex-col items-start justify-start gap-4 rounded-large border border-white/20 bg-black px-4 py-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4),_0_2px_8px_rgba(0,0,0,0.2),_0_0_0_1px_rgba(255,255,255,0.08),_inset_0_1px_0_rgba(255,255,255,0.1)]",
             className,
           )}
         >

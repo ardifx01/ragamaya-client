@@ -71,6 +71,10 @@ export const LoginModal: FC<LoginModalProps> = ({
             color: "success"
           });
 
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 1000);
+
         } else {
           const errorData = await res.json();
           addToast({
@@ -102,11 +106,11 @@ export const LoginModal: FC<LoginModalProps> = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} placement="center" backdrop="blur">
-      <ModalContent>
+      <ModalContent className="bg-white text-gray-800 rounded-xl shadow-lg">
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1 text-center">
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className="text-2xl font-bold text-gray-900">
                 Masuk ke RagaMaya
               </h2>
               <p className="text-sm text-gray-600">
@@ -116,7 +120,7 @@ export const LoginModal: FC<LoginModalProps> = ({
 
             <ModalBody className="py-6">
               <Button
-                className="w-full h-12 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium"
+                className="w-full h-12 bg-gray-100 border-2 border-gray-300 hover:bg-gray-300 text-gray-700 font-medium"
                 startContent={
                   <Image
                     alt="Google Logo"
@@ -148,7 +152,7 @@ export const LoginModal: FC<LoginModalProps> = ({
               </p>
               <Button
                 onPress={onClose}
-                className="bg-gray-800 text-white font-semibold"
+                className="bg-gray-800 text-white font-semibold hover:bg-gray-700"
                 disabled={isLoading}
               >
                 Kembali
@@ -158,5 +162,6 @@ export const LoginModal: FC<LoginModalProps> = ({
         )}
       </ModalContent>
     </Modal>
+
   );
 };

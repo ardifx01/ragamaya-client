@@ -38,14 +38,14 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({ videoRef, onCapture, onCl
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Button
           onPress={onCapture}
-          className="flex text-md items-center justify-center gap-2 bg-black text-white font-semibold py-6 px-8 rounded-xl transition-all duration-300 hover:scale-105"
+          className="flex text-md items-center justify-center gap-2 bg-black/30 hover:bg-white/20 text-white  font-semibold border border-white hover:border-white/40 py-6 px-8 rounded-xl transition-all duration-300 hover:scale-105"
         >
           <Camera size={20} className="mt-0.5" />
           Ambil Foto
         </Button>
         <Button
           onPress={onClose}
-          className="flex text-md items-center justify-center gap-2 bg-black text-white font-semibold py-6 px-5 rounded-xl transition-all duration-300 hover:scale-105"
+          className="flex text-md items-center justify-center gap-2 bg-black/30 hover:bg-white/20 text-white  font-semibold border border-white hover:border-white/40 py-6 px-5 rounded-xl transition-all duration-300 hover:scale-105"
         >
           <X size={20} className="mt-0.5" />
           Tutup Kamera

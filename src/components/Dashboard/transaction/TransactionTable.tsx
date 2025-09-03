@@ -40,13 +40,30 @@ const TransactionTable: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     const columns = useMemo(() => [
-        // ... (definisi kolom tidak berubah)
-        columnHelper.accessor('user', {
-            id: 'user', header: 'Nama Pembeli', cell: info => {
-                const user = info.getValue();
-                return (<div className="flex items-center gap-3"><Image src={user.avatar_url} alt={user.name} className="h-10 w-10 rounded-full object-cover bg-zinc-800" /><span className="font-medium text-white">{user.name}</span></div>);
-            },
-        }),
+        columnHelper.accessor(
+            (row) => ({ user: row.user, uuid: row.uuid }),
+            {
+                id: 'pembeliInfo',
+                header: 'Info Pembeli',
+
+                cell: info => {
+                    const { user, uuid } = info.getValue();
+                    return (
+                        <div className="flex items-center gap-4">
+                            <Image
+                                src={user.avatar_url}
+                                alt={user.name}
+                                className="h-10 w-10 flex-shrink-0 rounded-full object-cover bg-zinc-800"
+                            />
+                            <div>
+                                <div className="font-medium text-white">{user.name}</div>
+                                <div className="text-xs text-zinc-400 font-mono mt-1">ID Transaksi: {uuid}</div>
+                            </div>
+                        </div>
+                    );
+                },
+            }
+        ),
         columnHelper.accessor('product', {
             id: 'product', header: 'Produk', cell: info => {
                 const product = info.getValue();

@@ -145,35 +145,42 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
         }
     };
 
-    const filePondServerConfig = {
-        process: {
-            url: `${process.env.NEXT_PUBLIC_BASE_API}/storage/image/upload`,
-            headers: {
-                Authorization: `Bearer ${Cookies.get("access_token")}`,
-            },
-            onload: (response: any): string | ServerUrl | ProcessServerConfigFunction | null | undefined => {
-                try {
-                    const res = JSON.parse(response);
-                    if (res.status === 200 && res.body && res.body.length > 0) {
-                        const fileResult = res.body[0];
-                        if (fileResult.status === "success" && fileResult.result?.public_url) {
-                            // Kembalikan public_url sebagai ID unik untuk file ini
-                            return fileResult.result.public_url;
+    const filePondServerConfig = (type: 'thumbnail' | 'digitalFile') => {
+        const url = `${process.env.NEXT_PUBLIC_BASE_API}/storage/${type === 'thumbnail' ? 'image' : 'general'}/upload`;
+
+        return {
+            process: {
+                url: url,
+                headers: { Authorization: `Bearer ${Cookies.get("access_token")}` },
+                onload: (response: any): string => {
+                    try {
+                        const res = JSON.parse(response);
+
+                        if (type === 'digitalFile') {
+                            const fileResult = res.body;
+                            // SOLUSI: Cukup periksa apakah `public_url` ada.
+                            if (fileResult?.public_url) {
+                                return fileResult.public_url;
+                            }
+                        } else { // Logika untuk thumbnail sudah benar
+                            const fileResult = res.body[0];
+                            if (fileResult.status === "success" && fileResult.result?.public_url) {
+                                return fileResult.result.public_url;
+                            }
                         }
+
+                        // Jika gagal pada salah satu kondisi di atas, log error
+                        console.error(`Gagal mendapatkan public_url untuk tipe '${type}':`, res);
+                        return '';
+
+                    } catch (e) {
+                        console.error("Gagal mem-parsing JSON dari server:", e);
+                        return '';
                     }
-                    console.error("Struktur respons API upload tidak sesuai:", res);
-                    return null;
-                } catch (e) {
-                    console.error("Gagal mem-parsing respons server:", e);
-                    return null;
-                }
+                },
             },
-        },
-        revert: (uniqueFileId: string, load: () => void, error: (e: Error) => void) => {
-            console.log("Reverting file:", uniqueFileId);
-            // Anda bisa memanggil API delete di sini menggunakan uniqueFileId (yaitu public_url)
-            load();
-        },
+            revert: null,
+        };
     };
 
     const handleModalClose = (isOpen: boolean) => {
@@ -215,7 +222,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                                 allowMultiple={true}
                                 maxFiles={5}
                                 acceptedFileTypes={['image/*']}
-                                server={filePondServerConfig}
+                                server={filePondServerConfig('thumbnail')}
                                 name="files"
                                 labelIdle='Drag & Drop gambar atau <span class="filepond--label-action">Browse</span>'
                                 onprocessfile={(error, file) => {
@@ -246,11 +253,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
                                 ref={digitalFilesPond}
                                 allowMultiple={true}
                                 maxFiles={5}
-                                server={filePondServerConfig}
-                                name="files"
+                                server={filePondServerConfig('digitalFile')}
+                                name="file"
                                 labelIdle='Drag & Drop file digital atau <span class="filepond--label-action">Browse</span>'
                                 onprocessfile={(error, file) => {
-                                    if (error) { console.error('Upload file digital error:', error); return; }
+                                    if (error) { console.error('Upload thumbnail error:', error); return; }
                                     const serverId = file.serverId; // Ini adalah public_url
                                     if (serverId) {
                                         setUploadedDigitalFiles(prev => [

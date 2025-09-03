@@ -12,7 +12,7 @@ const Edukasi = () => {
     const [selectedLevel, setSelectedLevel] = useState("Semua Level");
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-800 via-black to-gray-900 px-4 pt-28 pb-16">
+        <div className="px-4 pt-28 pb-16">
             <div className="max-w-7xl mx-auto">
 
                 <Header />

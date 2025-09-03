@@ -20,27 +20,17 @@ export default function LandingPage() {
         />
       </div>
 
-      <div className="relative z-10">
-        <section id="hero" className="min-h-screen">
-          <Hero />
-        </section>
+      <Hero />
 
-        <div className="relative">
-          <div className="absolute left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
-
-        <section id="fitur" className="min-h-screen">
-          <Fitur />
-        </section>
-
-        <section id="fitur-unggulan" className="">
-          <FiturUnggulan />
-        </section>
-
-        <section id="cta" className="min-h-screen">
-          <CTA />
-        </section>
+      <div className="relative">
+        <div className="absolute left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       </div>
+
+      <Fitur />
+
+      <FiturUnggulan />
+
+      <CTA />
     </div>
   );
 }

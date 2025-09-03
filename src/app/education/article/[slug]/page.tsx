@@ -23,12 +23,6 @@ interface Article {
   category: Category;
 }
 
-interface ApiResponse {
-  status: number;
-  message: string;
-  body: Article[];
-}
-
 export default function ArticleDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -56,7 +50,7 @@ export default function ArticleDetailPage() {
   };
 
   const formatContent = (content: string): string => {
-    let formattedContent = content
+    const formattedContent = content
       .replace(/^### (.*$)/gim, '<h3 class="text-2xl font-bold mt-8 mb-4 text-white">$1</h3>')
       .replace(/^## (.*$)/gim, '<h2 class="text-3xl font-bold mt-10 mb-6 text-white">$1</h2>')
       .replace(/^# (.*$)/gim, '<h1 class="text-4xl font-bold mt-12 mb-8 text-white">$1</h1>')
@@ -352,7 +346,7 @@ export default function ArticleDetailPage() {
                             <Chip
                               size="sm"
                               variant="flat"
-                              className="bg-gray-800 text-gray-400 text-xs"
+                              className="bg-white/10 backdrop-blur-sm text-white/90 px-3 py-1 rounded-full border border-white/20 text-xs"
                             >
                               {otherArticle.category.name}
                             </Chip>
@@ -371,7 +365,7 @@ export default function ArticleDetailPage() {
               </div>
 
               <div className="mt-6 pt-4 border-t border-gray-800">
-                <Link href="/">
+                <Link href="/education">
                   <Button
                     className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300"
                     startContent={<ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform duration-300" />}

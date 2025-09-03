@@ -77,22 +77,22 @@ const Article = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-  const fetchArticles = async () => {
-    try {
-      setLoading(true);
-      const data = await RequestAPI("/article/search", 'get');
-      setArticles(data.body || []);
-      setError(null);
-    } catch (err) {
-      setError('Gagal memuat artikel');
-      setArticles([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchArticles = async () => {
+      try {
+        setLoading(true);
+        const data = await RequestAPI("/article/search", 'get');
+        setArticles(data.body || []);
+        setError(null);
+      } catch (err) {
+        setError('Gagal memuat artikel');
+        setArticles([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchArticles();
-}, []);
+    fetchArticles();
+  }, []);
 
   if (loading) {
     return (
@@ -100,26 +100,26 @@ const Article = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="animate-pulse">
-              <Card className="bg-black border-2 border-gray-700 h-full">
-                <CardBody className="p-0">
-                  <div className="w-full h-[250px] bg-gray-800"></div>
+              <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-2xl border border-white/20 h-full p-1">
+                <div className="p-0">
+                  <div className="w-full h-[250px] bg-gradient-to-r from-white/20 to-white/10 rounded-2xl"></div>
                   <div className="p-6">
                     <div className="flex gap-2 mb-3">
-                      <div className="h-6 w-16 bg-gray-800 rounded"></div>
+                      <div className="h-6 w-16 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl"></div>
                     </div>
-                    <div className="h-6 bg-gray-800 rounded mb-3 w-3/4"></div>
+                    <div className="h-6 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl mb-3 w-3/4"></div>
                     <div className="space-y-2 mb-4">
-                      <div className="h-4 bg-gray-800 rounded w-full"></div>
-                      <div className="h-4 bg-gray-800 rounded w-2/3"></div>
+                      <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl w-full"></div>
+                      <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl w-2/3"></div>
                     </div>
                     <div className="flex justify-between mb-4">
-                      <div className="h-4 bg-gray-800 rounded w-1/3"></div>
-                      <div className="h-4 bg-gray-800 rounded w-1/4"></div>
+                      <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl w-1/3"></div>
+                      <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl w-1/4"></div>
                     </div>
-                    <div className="h-10 bg-gray-800 rounded"></div>
+                    <div className="h-10 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl"></div>
                   </div>
-                </CardBody>
-              </Card>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -130,17 +130,17 @@ const Article = () => {
   if (error) {
     return (
       <div className="mt-8 max-w-7xl mx-auto text-center">
-        <Card className="bg-red-900/20 border-2 border-red-700">
-          <CardBody className="p-6">
+        <div className="bg-red-900/20 backdrop-blur-sm border-2 border-red-700 rounded-2xl p-1">
+          <div className="p-6">
             <p className="text-red-400">Error loading articles: {error}</p>
             <Button 
-              className="mt-4 bg-red-700 hover:bg-red-600 text-white"
+              className="mt-4 bg-red-700 hover:bg-red-600 text-white rounded-2xl"
               onClick={() => window.location.reload()}
             >
               Coba Lagi
             </Button>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
@@ -148,11 +148,11 @@ const Article = () => {
   if (articles.length === 0) {
     return (
       <div className="mt-8 max-w-7xl mx-auto text-center">
-        <Card className="bg-black border-2 border-gray-700">
-          <CardBody className="p-6">
+        <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border-2 border-white/20 rounded-2xl p-1">
+          <div className="p-6">
             <p className="text-gray-400">Tidak ada artikel yang ditemukan.</p>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
@@ -169,17 +169,18 @@ const Article = () => {
             transition={{ delay: index * 0.2 }}
             className="h-full"
           >
-            <Card className="bg-black border-2 border-gray-700 hover:border-gray-500 transition-all duration-200 h-full">
-              <CardBody className="p-0 flex flex-col h-full">
-                <motion.div variants={itemVariants}>
+            <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-[1.02] h-full rounded-2xl p-1 shadow-xl">
+              <div className="p-0 flex flex-col h-full">
+                <motion.div variants={itemVariants} className="relative overflow-hidden rounded-2xl">
                   <Image
                     src={article.thumbnail}
                     alt={article.title}
                     width={700}
                     height={250}
-                    className="object-cover"
+                    className="object-cover rounded-2xl"
                     fallbackSrc="/assets/fitur1.jpg"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-2xl"></div>
                 </motion.div>
 
                 <div className="p-6 text-white flex flex-col flex-grow">
@@ -187,7 +188,7 @@ const Article = () => {
                     <Chip
                       size="sm"
                       variant="flat"
-                      className="bg-gray-800 text-gray-300 px-2"
+                      className="bg-white/10 backdrop-blur-sm text-white/90 px-3 py-1 rounded-full border border-white/20"
                     >
                       {article.category.name}
                     </Chip>
@@ -195,21 +196,21 @@ const Article = () => {
 
                   <motion.h3
                     variants={itemVariants}
-                    className="text-xl font-bold line-clamp-2 mb-3"
+                    className="text-xl font-bold line-clamp-2 mb-3 hover:text-gray-300 transition-colors"
                   >
                     {article.title}
                   </motion.h3>
 
                   <motion.p
                     variants={itemVariants}
-                    className="text-gray-400 text-sm mb-10 line-clamp-3 flex-grow"
+                    className="text-gray-300 text-sm mb-10 line-clamp-3 flex-grow leading-relaxed"
                   >
                     {getExcerpt(article.content)}
                   </motion.p>
 
                   <motion.div
                     variants={itemVariants}
-                    className="flex items-center justify-between text-sm text-gray-400 mb-4"
+                    className="flex items-center justify-between text-sm text-gray-300 mb-4"
                   >
                     <span>{formatDate(article.created_at)}</span>
                     <div className="flex items-center gap-4">
@@ -223,13 +224,13 @@ const Article = () => {
                   <motion.div variants={itemVariants} className="mt-auto">
                     <Link href={`education/article/${article.slug}`}>
                       <Button
-                        className="w-full bg-white text-black hover:bg-gray-100 font-medium flex items-center justify-center gap-2"
+                        className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2 group"
                         size="md"
                         endContent={
                           <MoveRight
                             size={18}
                             strokeWidth={2.5}
-                            className="align-middle relative top-[1px]"
+                            className="align-middle relative top-[1px] group-hover:translate-x-1 transition-transform duration-300"
                           />
                         }
                       >
@@ -238,8 +239,8 @@ const Article = () => {
                     </Link>
                   </motion.div>
                 </div>
-              </CardBody>
-            </Card>
+              </div>
+            </div>
           </motion.div>
         ))}
       </div>

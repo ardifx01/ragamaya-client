@@ -3,3 +3,16 @@
 /* Note: You may need to change the path to fit your project structure */
  @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
  @custom-variant dark (&:is(.dark *));
+
+ @layer utilities {
+     .animate-pulse-delayed {
+         animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+         animation-delay: 4000ms;
+     }
+ }
+
+ @keyframes pulse {
+     50% {
+         opacity: .5;
+     }
+ }

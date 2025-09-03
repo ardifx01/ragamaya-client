@@ -18,9 +18,9 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
   isAnalyzing = false
 }) => {
   return (
-    <div className="p-8 border-t border-gray-200">
-      <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">Hasil Gambar</h3>
-      <div className="flex items-center justify-center min-h-[320px] mb-4">
+    <div className="p-8">
+      <h3 className="text-2xl font-bold text-gray-300 mb-8 text-center">Hasil Gambar</h3>
+      <div className="flex items-center justify-center min-h-[320px] mb-8">
         <Image
           src={selectedImage}
           alt="Preview Batik"

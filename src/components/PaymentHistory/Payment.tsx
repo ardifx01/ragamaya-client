@@ -236,7 +236,7 @@ const Payments = ({ StatusType }: { StatusType: PaymentStatusType }) => {
                                                                 alt={`Thumbnail dari ${transaction.product.name}`}
                                                                 className="object-cover w-full h-full"
                                                                 width={400}
-                                                                height={400}
+                                                                height={300}
                                                             />
 
                                                             {/* Status Badge */}

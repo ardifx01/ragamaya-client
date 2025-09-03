@@ -33,7 +33,7 @@ export default function LandingPage() {
           <Fitur />
         </section>
 
-        <section id="fitur-unggulan" className="min-h-screen">
+        <section id="fitur-unggulan" className="">
           <FiturUnggulan />
         </section>
 

@@ -120,14 +120,14 @@ const FiturUnggulan = () => {
     ];
 
     return (
-        <div ref={containerRef} className="relative py-20 px-6">
+        <div ref={containerRef} className="relative px-6">
             <div className="absolute inset-0 opacity-20">
                 <div className="absolute top-40 left-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
                 <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/8 rounded-full blur-3xl animate-pulse delay-1000" />
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl animate-pulse delay-2000" />
             </div>
             <div ref={heroRef} id ="FiturUnggulan" className="flex items-center justify-center mb-16">
-                <div className="text-center max-w-6xl mx-auto mt-40">
+                <div className="text-center max-w-6xl mx-auto md:mt-40 mt-0">
                     <h1 className="hero-title text-4xl md:text-6xl font-bold mb-6 leading-tight">
                         <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                             Coba Fitur

@@ -71,10 +71,10 @@ const CTA = () => {
             <div className="max-w-6xl mx-auto relative z-10">
                 <div className={`transform transition-all duration-1000 delay-600 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                     <div className="text-center mb-12">
-                        <h3 className="text-4xl md:text-6xl font-bold text-white mb-4">
+                        <h3 className="text-4xl md:text-6xl font-bold text-white mb-6">
                             Apa Kata <span className="bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent">Pengguna</span>
                         </h3>
-                        <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                        <p className="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
                             Testimoni dari para pengguna yang telah merasakan manfaat platform RagaMaya
                         </p>
                     </div>
@@ -82,11 +82,6 @@ const CTA = () => {
                     <div className="grid md:grid-cols-3 gap-6 mb-16">
                         {testimonials.map((testimonial, index) => (
                             <div key={index} className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 group">
-                                <div className="flex items-center space-x-1 mb-4">
-                                    {[...Array(testimonial.rating)].map((_, i) => (
-                                        <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                                    ))}
-                                </div>
                                 <p className="text-gray-300 mb-4 leading-relaxed group-hover:text-gray-200 transition-colors duration-300">
                                     "{testimonial.content}"
                                 </p>

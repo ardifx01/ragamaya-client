@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Card, CardBody, Button, Chip, Progress } from "@heroui/react";
-import { Clock, HelpCircle, ChevronLeft, ChevronRight, Send, CheckCircle, Award, BrainCircuit } from "lucide-react";
+import {Card, CardBody, Button, Chip, Progress, useDisclosure} from "@heroui/react";
+import { Clock, HelpCircle, ChevronLeft, ChevronRight, Send, CheckCircle, Award, BrainCircuit, XCircle, Download, Trophy, AlertTriangle } from "lucide-react";
 import RequestAPI from "@/helper/http";
+import {isUserLoggedIn} from "@/lib/GetUserData";
+import {LoginModal} from "@/components/LoginModal";
 
-// Tipe Data (Tidak ada perubahan)
+// Tipe Data
 interface Question {
     question: string;
     options: string[];
@@ -25,6 +27,19 @@ interface QuizDetail {
     };
 }
 
+interface Certificate {
+    uuid: string;
+    score: number;
+    certificate_url: string;
+    created_at: string;
+}
+
+interface QuizResult {
+    score: number;
+    match: "success" | "failed";
+    certificate?: Certificate;
+}
+
 type QuizStatus = "loading" | "ready" | "active" | "submitting" | "completed";
 
 const StartQuizPage = () => {
@@ -38,7 +53,10 @@ const StartQuizPage = () => {
     const [answers, setAnswers] = useState<(number | null)[]>([]);
     const [timeLeft, setTimeLeft] = useState(0);
     const [error, setError] = useState<string | null>(null);
-    const [quizResult, setQuizResult] = useState<any>(null);
+    const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
+
+    // Modal
+    const modalLogin = useDisclosure();
 
     useEffect(() => {
         if (!slug) return;
@@ -119,6 +137,12 @@ const StartQuizPage = () => {
         }
     };
 
+    const handleDownloadCertificate = () => {
+        if (quizResult?.certificate?.certificate_url) {
+            window.open(quizResult.certificate.certificate_url, '_blank');
+        }
+    };
+
     const currentQuestion = useMemo(() => {
         return quizDetail?.questions[currentQuestionIndex];
     }, [quizDetail, currentQuestionIndex]);
@@ -132,6 +156,24 @@ const StartQuizPage = () => {
     const capitalizeFirstLetter = (string: string) => {
         if (!string) return '';
         return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
+    const getScoreColor = (score: number) => {
+        if (score >= 80) return "text-green-400";
+        if (score >= 60) return "text-yellow-400";
+        return "text-red-400";
+    };
+
+    const getScoreMessage = (match: string, score: number) => {
+        if (match === "success") {
+            return "Selamat! Anda berhasil menyelesaikan kuis dengan baik.";
+        } else {
+            if (score >= 60) {
+                return "Hampir! Sedikit lagi untuk mencapai nilai kelulusan.";
+            } else {
+                return "Jangan menyerah! Mari belajar lebih giat dan coba lagi.";
+            }
+        }
     };
 
     const renderContent = () => {
@@ -177,12 +219,21 @@ const StartQuizPage = () => {
                                 </div>
                             </div>
 
-                            <Button
-                                onClick={handleStartQuiz}
-                                className="w-full bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
-                            >
-                                Mulai Kuis
-                            </Button>
+                            {isUserLoggedIn() ? (
+                                <Button
+                                    onPress={handleStartQuiz}
+                                    className="w-full bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
+                                >
+                                    Mulai Kuis
+                                </Button>
+                            ) : (
+                                <Button
+                                    onPress={modalLogin.onOpen}
+                                    className="w-full bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
+                                >
+                                    Login Terlebih Dahulu
+                                </Button>
+                            )}
                         </CardBody>
                     </Card>
                 );
@@ -259,7 +310,7 @@ const StartQuizPage = () => {
                             <Button
                                 variant="bordered"
                                 className="bg-slate-700/30 backdrop-blur-sm text-slate-300 border border-slate-600/50 hover:bg-slate-600/40 hover:border-slate-500/50 transition-all duration-300"
-                                onClick={handlePrevQuestion}
+                                onPress={handlePrevQuestion}
                                 disabled={currentQuestionIndex === 0}
                             >
                                 <ChevronLeft size={18}/> Sebelumnya
@@ -267,14 +318,14 @@ const StartQuizPage = () => {
                             {currentQuestionIndex === quizDetail!.total_questions - 1 ? (
                                 <Button
                                     className="bg-green-600/80 backdrop-blur-sm text-white font-semibold border border-green-500/50 hover:bg-green-500/80 hover:border-green-400/50 transition-all duration-300"
-                                    onClick={handleSubmitQuiz}
+                                    onPress={handleSubmitQuiz}
                                 >
                                     Kirim Jawaban <Send size={18}/>
                                 </Button>
                             ) : (
                                 <Button
                                     className="bg-blue-600/80 backdrop-blur-sm text-white border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
-                                    onClick={handleNextQuestion}
+                                    onPress={handleNextQuestion}
                                 >
                                     Selanjutnya <ChevronRight size={18}/>
                                 </Button>
@@ -294,31 +345,125 @@ const StartQuizPage = () => {
                 );
 
             case "completed":
-                return (
-                    <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 text-white w-full max-w-2xl">
-                        <CardBody className="p-8 text-center">
-                            <CheckCircle size={48} className="text-green-400 mx-auto mb-4" />
-                            <h1 className="text-3xl font-bold mb-3 text-white">
-                                Kuis Selesai!
-                            </h1>
-                            <p className="text-slate-300 mb-6">
-                                Terima kasih telah menyelesaikan kuis ini. Berikut adalah hasilnya.
-                            </p>
+                const isSuccess = quizResult?.match === "success";
+                const score = quizResult?.score || 0;
 
-                            {/* Score card */}
-                            <div className="bg-slate-700/40 backdrop-blur-sm border border-slate-600/50 p-6 rounded-xl mb-6">
-                                <p className="text-lg text-slate-300 mb-2">Skor Anda:</p>
-                                <p className="text-5xl font-bold text-blue-400">
-                                    {quizResult?.score ? Math.round(Number(quizResult.score)) : "N/A"}
-                                </p>
+                return (
+                    <Card className={`bg-slate-800/30 backdrop-blur-md border transition-all duration-300 text-white w-full max-w-2xl ${
+                        isSuccess
+                            ? 'border-green-500/50 hover:border-green-400/50 shadow-lg shadow-green-500/20'
+                            : 'border-red-500/50 hover:border-red-400/50 shadow-lg shadow-red-500/20'
+                    }`}>
+                        <CardBody className="p-8 text-center">
+                            {/* Icon and Status */}
+                            <div className="mb-6">
+                                {isSuccess ? (
+                                    <div className="flex flex-col items-center">
+                                        <div className="relative">
+                                            <Trophy size={64} className="text-yellow-400 mx-auto mb-2 animate-bounce" />
+                                            <div className="absolute -top-2 -right-2">
+                                                <CheckCircle size={24} className="text-green-400" />
+                                            </div>
+                                        </div>
+                                        <Chip
+                                            size="sm"
+                                            className="bg-green-600/20 text-green-300 border border-green-500/30"
+                                        >
+                                            LULUS
+                                        </Chip>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center">
+                                        <div className="relative">
+                                            <AlertTriangle size={64} className="text-red-400 mx-auto mb-2" />
+                                            <div className="absolute -top-2 -right-2">
+                                                <XCircle size={24} className="text-red-400" />
+                                            </div>
+                                        </div>
+                                        <Chip
+                                            size="sm"
+                                            className="bg-red-600/20 text-red-300 border border-red-500/30"
+                                        >
+                                            TIDAK LULUS
+                                        </Chip>
+                                    </div>
+                                )}
                             </div>
 
-                            <Button
-                                onClick={() => router.push('/edukasi/quiz')}
-                                className="w-full bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
-                            >
-                                Kembali ke Daftar Kuis
-                            </Button>
+                            {/* Title */}
+                            <h1 className="text-3xl font-bold mb-3 text-white">
+                                {isSuccess ? "Selamat! Kuis Berhasil!" : "Kuis Selesai"}
+                            </h1>
+
+                            {/* Message */}
+                            <p className="text-slate-300 mb-6">
+                                {getScoreMessage(quizResult?.match || "failed", score)}
+                            </p>
+
+                            {/* Score Display */}
+                            <div className={`backdrop-blur-sm border p-6 rounded-xl mb-6 ${
+                                isSuccess
+                                    ? 'bg-green-700/20 border-green-600/30'
+                                    : 'bg-red-700/20 border-red-600/30'
+                            }`}>
+                                <p className="text-lg text-slate-300 mb-2">Skor Anda:</p>
+                                <p className={`text-5xl font-bold ${getScoreColor(score)}`}>
+                                    {Math.round(score)}
+                                </p>
+                                <div className="mt-2">
+                                    <Progress
+                                        value={score}
+                                        color={isSuccess ? "success" : "danger"}
+                                        className="max-w-md mx-auto"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Certificate Section - Only for Success */}
+                            {isSuccess && quizResult?.certificate && (
+                                <div className="bg-gradient-to-r from-yellow-600/10 to-orange-600/10 border border-yellow-500/30 p-4 rounded-xl mb-6">
+                                    <div className="flex items-center justify-center gap-2 mb-3">
+                                        <Award size={20} className="text-yellow-400" />
+                                        <span className="text-yellow-300 font-semibold">Sertifikat Tersedia</span>
+                                    </div>
+                                    <p className="text-slate-300 text-sm mb-4">
+                                        Anda telah memenuhi syarat untuk mendapatkan sertifikat!
+                                    </p>
+                                    <Button
+                                        onClick={handleDownloadCertificate}
+                                        className="bg-yellow-600/80 backdrop-blur-sm text-white font-semibold border border-yellow-500/50 hover:bg-yellow-500/80 hover:border-yellow-400/50 transition-all duration-300"
+                                    >
+                                        <Download size={18} /> Unduh Sertifikat
+                                    </Button>
+                                </div>
+                            )}
+
+                            {/* Action Buttons */}
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <Button
+                                    onClick={() => router.push('/edukasi/quiz')}
+                                    className="flex-1 bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
+                                >
+                                    Kembali ke Daftar Kuis
+                                </Button>
+                                {!isSuccess && (
+                                    <Button
+                                        onClick={() => window.location.reload()}
+                                        className="flex-1 bg-orange-600/80 backdrop-blur-sm text-white font-bold border border-orange-500/50 hover:bg-orange-500/80 hover:border-orange-400/50 transition-all duration-300"
+                                    >
+                                        Coba Lagi
+                                    </Button>
+                                )}
+                            </div>
+
+                            {/* Additional Info for Failed Quiz */}
+                            {!isSuccess && (
+                                <div className="mt-6 p-4 bg-slate-700/30 border border-slate-600/30 rounded-xl">
+                                    <p className="text-slate-300 text-sm">
+                                        <strong>Tips:</strong> Pelajari materi dengan lebih teliti dan pastikan Anda memahami setiap konsep sebelum mencoba lagi.
+                                    </p>
+                                </div>
+                            )}
                         </CardBody>
                     </Card>
                 );
@@ -342,7 +487,7 @@ const StartQuizPage = () => {
         );
     }
 
-    return (
+    return <>
         <div className="min-h-screen text-white p-4 flex flex-col items-center justify-center bg-gray-900 relative overflow-hidden">
             {/* Background Elements */}
             <div className="absolute top-0 left-0 w-full h-full bg-black"></div>
@@ -353,7 +498,12 @@ const StartQuizPage = () => {
                 {renderContent()}
             </main>
         </div>
-    );
+        <LoginModal
+            isOpen={modalLogin.isOpen}
+            onClose={modalLogin.onClose}
+            onLoginSuccess={() => window.location.reload()}
+        />
+    </>;
 };
 
 export default StartQuizPage;

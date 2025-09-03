@@ -1,11 +1,13 @@
 "use client";
 
-import { Card, CardBody, Button, Chip } from "@heroui/react";
+import {Card, CardBody, Button, Chip, useDisclosure} from "@heroui/react";
 import { Clock, BookOpen, PlayCircle } from "lucide-react";
 import { easeOut, motion } from "motion/react";
 import { useState, useEffect } from "react";
 import RequestAPI from "@/helper/http";
 import {useRouter} from "next/navigation";
+import {isUserLoggedIn} from "@/lib/GetUserData";
+import {LoginModal} from "@/components/LoginModal";
 
 // 1. Definisi tipe data berdasarkan respons API
 interface QuizCategory {
@@ -50,6 +52,9 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
     const [quizzes, setQuizzes] = useState<QuizData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    // Modal
+    const modalLogin = useDisclosure();
 
     // 3. useEffect untuk mengambil data saat komponen pertama kali dimuat
     useEffect(() => {
@@ -117,7 +122,7 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
         return <div className="text-center text-red-500 mt-10">{error}</div>;
     }
 
-    return (
+    return <>
         <div className="mt-8 max-w-7xl mx-auto">
             <div className="flex flex-col items-center gap-3 mb-8 md:flex-row md:flex-wrap md:justify-center">
                 <Button
@@ -209,13 +214,23 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
                                             </div>
                                         </motion.div>
                                         <motion.div variants={itemVariants} className="mt-auto">
-                                            <Button
-                                                onPress={() => router.push(`/edukasi/quiz/${quiz.slug}`)}
-                                                className="w-full bg-white text-black hover:bg-gray-100 font-medium flex items-center justify-center gap-2"
-                                                size="md">
-                                                <PlayCircle size={18} />
-                                                Mulai Kuis
-                                            </Button>
+                                            {isUserLoggedIn() ? (
+                                                <Button
+                                                    onPress={() => router.push(`/edukasi/quiz/${quiz.slug}`)}
+                                                    className="w-full bg-white text-black hover:bg-gray-100 font-medium flex items-center justify-center gap-2"
+                                                    size="md">
+                                                    <PlayCircle size={18} />
+                                                    Mulai Kuis
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    onPress={modalLogin.onOpen}
+                                                    className="w-full bg-white text-black hover:bg-gray-100 font-medium flex items-center justify-center gap-2"
+                                                    size="md">
+                                                    <PlayCircle size={18} />
+                                                    Login Terlebih Dahulu
+                                                </Button>
+                                            )}
                                         </motion.div>
                                     </CardBody>
                                 </Card>
@@ -229,7 +244,12 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
                 )}
             </div>
         </div>
-    );
+        <LoginModal
+            isOpen={modalLogin.isOpen}
+            onClose={modalLogin.onClose}
+            onLoginSuccess={() => window.location.reload()}
+        />
+    </>;
 };
 
 export default Quiz;

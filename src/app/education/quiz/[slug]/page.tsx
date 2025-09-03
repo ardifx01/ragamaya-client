@@ -430,7 +430,7 @@ const StartQuizPage = () => {
                                         Anda telah memenuhi syarat untuk mendapatkan sertifikat!
                                     </p>
                                     <Button
-                                        onClick={handleDownloadCertificate}
+                                        onPress={handleDownloadCertificate}
                                         className="bg-yellow-600/80 backdrop-blur-sm text-white font-semibold border border-yellow-500/50 hover:bg-yellow-500/80 hover:border-yellow-400/50 transition-all duration-300"
                                     >
                                         <Download size={18} /> Unduh Sertifikat
@@ -441,14 +441,14 @@ const StartQuizPage = () => {
                             {/* Action Buttons */}
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <Button
-                                    onClick={() => router.push('/edukasi/quiz')}
+                                    onPress={() => router.push('/education/quiz')}
                                     className="flex-1 bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
                                 >
                                     Kembali ke Daftar Kuis
                                 </Button>
                                 {!isSuccess && (
                                     <Button
-                                        onClick={() => window.location.reload()}
+                                        onPress={() => window.location.reload()}
                                         className="flex-1 bg-orange-600/80 backdrop-blur-sm text-white font-bold border border-orange-500/50 hover:bg-orange-500/80 hover:border-orange-400/50 transition-all duration-300"
                                     >
                                         Coba Lagi

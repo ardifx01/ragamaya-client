@@ -8,7 +8,7 @@ const QuizPage = () => {
     const router = useRouter();
 
     React.useEffect(() => {
-        router.push("/edukasi");
+        router.push("/education");
     }, [])
     return (
         <div className="min-h-screen text-white p-4 flex flex-col items-center justify-center bg-gray-900 relative overflow-hidden">

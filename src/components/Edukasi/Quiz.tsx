@@ -216,7 +216,7 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
                                         <motion.div variants={itemVariants} className="mt-auto">
                                             {isUserLoggedIn() ? (
                                                 <Button
-                                                    onPress={() => router.push(`/edukasi/quiz/${quiz.slug}`)}
+                                                    onPress={() => router.push(`/education/quiz/${quiz.slug}`)}
                                                     className="w-full bg-white text-black hover:bg-gray-100 font-medium flex items-center justify-center gap-2"
                                                     size="md">
                                                     <PlayCircle size={18} />

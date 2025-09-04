@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { Camera, ArrowRight, Sparkles, TrendingUp, Users, Award } from "lucide-react";
-import { Button, Link } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const Hero = () => {
   const stats = [
@@ -66,7 +67,6 @@ const Hero = () => {
             delay: 1,
           }}
         >
-
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
             <Button as={Link} href={'/detection'} className="group flex items-center py-6 bg-white text-black px-8 rounded-2xl font-medium hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
               <Camera className="w-5 h-5 group-hover:rotate-6 transition-transform duration-300 mt" />
@@ -102,38 +102,3 @@ const Hero = () => {
 };
 
 export default Hero;
-
-{/* <h1 className="relative z-10 mx-auto max-w-7xl text-left md:text-center text-5xl md:text-7xl font-bold text-white dark:text-slate-300 leading-tight sm:leading-tight md:leading-tight lg:leading-tight">
-            {"Temukan Keindahan Budaya Batik Indonesia"
-              .split(" ")
-              .map((word, index) => (
-                <motion.span
-                  key={index}
-                  initial={{ opacity: 0, filter: "blur(4px)", y: 10 }}
-                  animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-                  transition={{
-                    duration: 0.3,
-                    delay: index * 0.1,
-                    ease: "easeInOut",
-                  }}
-                  className="mr-2 inline-block"
-                >
-                  {word}
-                </motion.span>
-              ))}
-          </h1>
-          <motion.p
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            transition={{
-              duration: 0.3,
-              delay: 0.8,
-            }}
-            className="relative z-10 mx-auto max-w-xl py-4 text-left md:text-center text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-gray-300 px-2"
-          >
-            Jelajahi pola batik tradisional dengan pengenalan berbasis AI, belanja desain digital, dan pelajari warisan budaya batik Indonesia.
-          </motion.p> */}

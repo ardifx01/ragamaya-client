@@ -152,7 +152,7 @@ const Payments = ({ StatusType }: { StatusType: PaymentStatusType }) => {
         } else if (statusInfo.type === 'failed') {
             router.push(`/product/${transaction.product.uuid}`);
         } else if (statusInfo.type === 'pending') {
-            router.push(`/payment/${transaction.uuid}`);
+            router.push(`/payment/${transaction.order_uuid}`);
         }
     };
 

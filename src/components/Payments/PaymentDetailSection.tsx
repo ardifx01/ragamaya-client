@@ -300,11 +300,12 @@ const PaymentDetailSection: React.FC<PaymentDetailSectionProps> = ({ data }) => 
 
                 <div className="flex flex-col md:flex-row gap-6">
                     <div className="md:w-32 flex-shrink-0">
-                        <div className="w-full h-32 rounded-xl overflow-hidden bg-white/5 border border-white/10">
+                        <div className="w-full aspect-[4/3] rounded-xl border border-white/20 overflow-hidden">
                             <Image
                                 src={productData.thumbnails?.[0]?.thumbnail_url || '/images/placeholder.png'}
                                 alt={productData?.name || 'Product Image'}
-                                className="object-cover w-full h-full"
+                                className="object-cover h-full"
+                                width={400}
                             />
                         </div>
                     </div>
@@ -365,21 +366,21 @@ const PaymentDetailSection: React.FC<PaymentDetailSectionProps> = ({ data }) => 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div className="space-y-3">
                         <div className="flex justify-between">
-                            <span className="text-gray-400">Metode Pembayaran</span>
-                            <span className="text-white font-semibold uppercase">{currentPayment?.payment_type || 'N/A'}</span>
+                            <span className="text-gray-400 text-sm md:text-base">Metode Pembayaran</span>
+                            <span className="text-white font-semibold uppercase text-sm md:text-base">{currentPayment?.payment_type || 'N/A'}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-gray-400 text-sm md:text-base">Nomor Pesanan</span>
+                            <span className="text-white text-right truncate font-mono text-sm md:text-base">{data.uuid}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-gray-400">Nomor Pesanan</span>
-                            <span className="text-white font-mono text-sm">{data.uuid}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-gray-400">Total Pembayaran</span>
-                            <span className="text-white font-semibold">Rp {(currentPayment?.gross_amount || data.amount || 0).toLocaleString('id-ID')}</span>
+                            <span className="text-gray-400 text-sm md:text-base">Total Pembayaran</span>
+                            <span className="text-white font-semibold text-sm md:text-base">Rp {(currentPayment?.gross_amount || data.amount || 0).toLocaleString('id-ID')}</span>
                         </div>
                     </div>
                     <div className="space-y-3">
                         <div className="flex justify-between">
-                            <span className="text-gray-400">Status Transaksi</span>
+                            <span className="text-gray-400 text-sm md:text-base">Status Transaksi</span>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${(currentPayment?.transaction_status || data.status) === 'pending'
                                 ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
                                 : (currentPayment?.transaction_status || data.status) === 'settlement'
@@ -392,14 +393,10 @@ const PaymentDetailSection: React.FC<PaymentDetailSectionProps> = ({ data }) => 
                             </span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-gray-400">Waktu Expire</span>
-                            <span className="text-white text-sm">
+                            <span className="text-gray-400 text-sm md:text-base">Waktu Expire</span>
+                            <span className="text-white text-sm md:text-base">
                                 {currentPayment?.expiry_time ? new Date(currentPayment.expiry_time).toLocaleString('id-ID') : 'N/A'}
                             </span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-gray-400">Acquirer</span>
-                            <span className="text-white text-sm uppercase">{currentPayment?.acquirer || 'N/A'}</span>
                         </div>
                     </div>
                 </div>

@@ -53,7 +53,7 @@ const PaymentStatusBanner = ({ status }) => {
         )
     } else if (status === "settlement") {
         return (
-            <div className={`bg-gradient-to-tl from-violet-500 to-violet-300 w-full pb-10 pt-20 flex flex-col items-center justify-center`}>
+            <div className={`bg-gradient-to-tl from-blue-300 to-blue-400 w-full pb-10 pt-20 flex flex-col items-center justify-center`}>
                 <Player
                     src="/animations/success.json"
                     autoplay
@@ -62,7 +62,7 @@ const PaymentStatusBanner = ({ status }) => {
                 />
                 <div>
                     <p className='w-11/12 mx-auto text-center text-white text-2xl font-bold'>Transaksi Berhasil</p>
-                    <p className='w-11/12 mx-auto text-center text-white'>Transaksi selesai! Tiket digital kamu berhasil dibuat</p>
+                    <p className='w-11/12 mx-auto text-center text-white'>Transaksi selesai! silahkan download Design Batik Digital kamu! </p>
                 </div>
             </div>
         )

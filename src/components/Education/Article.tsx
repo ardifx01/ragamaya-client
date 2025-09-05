@@ -1,6 +1,6 @@
 "use client"
 
-import { Card, CardBody, Button, Chip, Image } from "@heroui/react";
+import {  Button, Chip, Image } from "@heroui/react";
 import { Clock, MoveRight } from "lucide-react";
 import { easeOut, motion } from "motion/react";
 import { useState, useEffect } from "react";
@@ -45,7 +45,6 @@ const itemVariants = {
   show: { opacity: 1, y: 0, filter: "blur(0px)" },
 };
 
-// Helper function to calculate reading time
 const calculateReadingTime = (content: string): string => {
   const wordsPerMinute = 200;
   const words = content.split(' ').length;
@@ -53,7 +52,6 @@ const calculateReadingTime = (content: string): string => {
   return `${minutes} menit baca`;
 };
 
-// Helper function to get excerpt from content
 const getExcerpt = (content: string, maxLength: number = 150): string => {
   const textContent = content.replace(/[#*`]/g, '').replace(/\n/g, ' ');
   return textContent.length > maxLength 
@@ -61,7 +59,6 @@ const getExcerpt = (content: string, maxLength: number = 150): string => {
     : textContent;
 };
 
-// Helper function to format date
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   return date.toLocaleDateString('id-ID', {
@@ -100,7 +97,7 @@ const Article = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="animate-pulse">
-              <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-2xl border border-white/20 h-full p-1">
+              <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-2xl border border-white/20 h-full">
                 <div className="p-0">
                   <div className="w-full h-[250px] bg-gradient-to-r from-white/20 to-white/10 rounded-2xl"></div>
                   <div className="p-6">
@@ -135,7 +132,7 @@ const Article = () => {
             <p className="text-red-400">Error loading articles: {error}</p>
             <Button 
               className="mt-4 bg-red-700 hover:bg-red-600 text-white rounded-2xl"
-              onClick={() => window.location.reload()}
+              onPress={() => window.location.reload()}
             >
               Coba Lagi
             </Button>
@@ -169,8 +166,8 @@ const Article = () => {
             transition={{ delay: index * 0.2 }}
             className="h-full"
           >
-            <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-[1.02] h-full rounded-2xl p-1 shadow-xl">
-              <div className="p-0 flex flex-col h-full">
+            <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-[1.02] h-full rounded-2xl shadow-xl">
+              <div className="flex flex-col h-full">
                 <motion.div variants={itemVariants} className="relative overflow-hidden rounded-2xl">
                   <Image
                     src={article.thumbnail}
@@ -178,7 +175,6 @@ const Article = () => {
                     width={700}
                     height={250}
                     className="object-cover rounded-2xl"
-                    fallbackSrc="/assets/fitur1.jpg"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-2xl"></div>
                 </motion.div>

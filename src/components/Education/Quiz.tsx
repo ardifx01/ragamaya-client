@@ -1,6 +1,6 @@
 "use client";
 
-import {Card, CardBody, Button, Chip, useDisclosure} from "@heroui/react";
+import { Button, Chip, useDisclosure} from "@heroui/react";
 import { Clock, BookOpen, PlayCircle } from "lucide-react";
 import { easeOut, motion } from "motion/react";
 import { useState, useEffect } from "react";
@@ -104,22 +104,74 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
     // Helper untuk warna level disesuaikan
     const getLevelColor = (level: string) => {
         const levelColors: Record<string, string> = {
-            Pemula: "bg-green-100 text-green-800",
-            Menengah: "bg-yellow-100 text-yellow-800",
-            Lanjutan: "bg-red-100 text-red-800",
+            Pemula: "bg-green-500/20 backdrop-blur-sm text-green-300 border border-green-500/30",
+            Menengah: "bg-yellow-500/20 backdrop-blur-sm text-yellow-300 border border-yellow-500/30",
+            Lanjutan: "bg-red-500/20 backdrop-blur-sm text-red-300 border border-red-500/30",
         };
-        return levelColors[level] || "bg-gray-100 text-gray-800";
+        return levelColors[level] || "bg-white/10 backdrop-blur-sm text-white/90 border border-white/20";
     };
 
     const filteredQuizzes = filterByLevel(quizzes, selectedLevel);
 
-    // 5. Tampilan untuk state loading dan error
+    // 5. Loading skeleton component
+    const LoadingSkeleton = () => (
+        <div className="mt-8 max-w-7xl mx-auto">
+            <div className="flex flex-col items-center gap-3 mb-8 md:flex-row md:flex-wrap md:justify-center">
+                <div className="h-10 w-24 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl animate-pulse"></div>
+                <div className="flex flex-wrap justify-center gap-3">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-10 w-20 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl animate-pulse"></div>
+                    ))}
+                </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="animate-pulse">
+                        <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm rounded-2xl border border-white/20 h-full">
+                            <div className="p-6">
+                                <div className="flex gap-2 mb-4">
+                                    <div className="h-6 w-16 bg-gradient-to-r from-white/20 to-white/10 rounded-full"></div>
+                                    <div className="h-6 w-16 bg-gradient-to-r from-white/20 to-white/10 rounded-full"></div>
+                                </div>
+                                <div className="h-6 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl mb-3 w-3/4"></div>
+                                <div className="space-y-2 mb-8">
+                                    <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl w-full"></div>
+                                    <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl w-2/3"></div>
+                                </div>
+                                <div className="flex justify-between mb-6">
+                                    <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl w-1/3"></div>
+                                    <div className="h-4 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl w-1/4"></div>
+                                </div>
+                                <div className="h-12 bg-gradient-to-r from-white/20 to-white/10 rounded-2xl"></div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+
+    // Tampilan untuk state loading
     if (isLoading) {
-        return <div className="text-center text-white mt-10">Memuat kuis...</div>;
+        return <LoadingSkeleton />;
     }
 
     if (error) {
-        return <div className="text-center text-red-500 mt-10">{error}</div>;
+        return (
+            <div className="mt-8 max-w-7xl mx-auto text-center">
+                <div className="bg-red-900/20 backdrop-blur-sm border-2 border-red-700 rounded-2xl p-1">
+                    <div className="p-6">
+                        <p className="text-red-400">{error}</p>
+                        <Button 
+                            className="mt-4 bg-red-700 hover:bg-red-600 text-white rounded-2xl"
+                            onPress={() => window.location.reload()}
+                        >
+                            Coba Lagi
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return <>
@@ -131,8 +183,8 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
                     onPress={() => setSelectedLevel("Semua Level")}
                     className={`${
                         selectedLevel === "Semua Level"
-                            ? "bg-gray-700 text-white border-gray-500"
-                            : "bg-transparent text-gray-400 border-gray-600 hover:border-gray-400"
+                            ? "bg-white/20 backdrop-blur-sm text-white border-white/40 rounded-2xl"
+                            : "bg-white/10 backdrop-blur-sm text-white/70 border-white/20 hover:border-white/40 rounded-2xl"
                     }`}
                 >
                     Semua Level
@@ -146,8 +198,8 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
                             onPress={() => setSelectedLevel(level)}
                             className={`${
                                 selectedLevel === level
-                                    ? "bg-gray-700 text-white border-gray-500"
-                                    : "bg-transparent text-gray-400 border-gray-600 hover:border-gray-400"
+                                    ? "bg-white/20 backdrop-blur-sm text-white border-white/40 rounded-2xl"
+                                    : "bg-white/10 backdrop-blur-sm text-white/70 border-white/20 hover:border-white/40 rounded-2xl"
                             }`}
                         >
                             {level}
@@ -170,76 +222,88 @@ const Quiz: React.FC<QuizProps> = ({ selectedLevel, setSelectedLevel }) => {
                                 transition={{ delay: index * 0.2 }}
                                 className="h-full"
                             >
-                                <Card className="bg-black border-2 border-gray-700 hover:border-gray-500 transition-all duration-200 h-full">
-                                    <CardBody className="p-6 text-white flex flex-col h-full">
+                                <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-[1.02] h-full rounded-2xl shadow-xl">
+                                    <div className="p-6 text-white flex flex-col h-full">
                                         <motion.div variants={itemVariants} className="flex flex-wrap gap-2 mb-4">
                                             <Chip
                                                 size="sm"
                                                 variant="flat"
-                                                className="bg-gray-800 text-gray-300 px-2"
+                                                className="bg-white/10 backdrop-blur-sm text-white/90 px-3 py-1 rounded-full border border-white/20"
                                             >
-                                                {quiz.category.name} {/* Menggunakan nama kategori */}
+                                                {quiz.category.name}
                                             </Chip>
                                             <Chip
                                                 size="sm"
                                                 variant="flat"
-                                                className={`${getLevelColor(displayLevel)} px-2`}
+                                                className={`${getLevelColor(displayLevel)} px-3 py-1 rounded-full`}
                                             >
-                                                {displayLevel} {/* Level yang sudah diformat */}
+                                                {displayLevel}
                                             </Chip>
                                         </motion.div>
                                         <motion.h3
                                             variants={itemVariants}
-                                            className="text-xl font-semibold mb-3 line-clamp-2"
+                                            className="text-xl font-bold mb-3 line-clamp-2 hover:text-gray-300 transition-colors"
                                         >
                                             {quiz.title}
                                         </motion.h3>
                                         <motion.p
                                             variants={itemVariants}
-                                            className="text-gray-400 text-sm mb-8 flex-grow line-clamp-3"
+                                            className="text-gray-300 text-sm mb-8 flex-grow line-clamp-3 leading-relaxed"
                                         >
-                                            {quiz.desc} {/* Menggunakan 'desc' dari API */}
+                                            {quiz.desc}
                                         </motion.p>
                                         <motion.div
                                             variants={itemVariants}
-                                            className="gap-3 mb-6 text-sm flex w-full justify-between items-center"
+                                            className="flex items-center justify-between text-sm text-gray-300 mb-6"
                                         >
-                                            <div className="flex items-center gap-2 text-gray-300">
-                                                <BookOpen size={16} className="text-gray-500 align-middle relative top-[1px]" />
-                                                <p className="leading-none">{quiz.total_questions} pertanyaan</p> {/* Menggunakan 'total_questions' */}
+                                            <div className="flex items-center gap-1">
+                                                <BookOpen size={14} className="align-middle relative top-[1px]" />
+                                                <span className="leading-none">{quiz.total_questions} pertanyaan</span>
                                             </div>
-                                            <div className="flex items-center gap-2 text-gray-300">
-                                                <Clock size={16} className="text-gray-500 align-middle relative top-[1px]" />
-                                                <span className="leading-none">{quiz.estimate} menit</span> {/* Menggunakan 'estimate' */}
+                                            <div className="flex items-center gap-1">
+                                                <Clock size={14} className="align-middle relative top-[1px]" />
+                                                <span className="leading-none">{quiz.estimate} menit</span>
                                             </div>
                                         </motion.div>
                                         <motion.div variants={itemVariants} className="mt-auto">
                                             {isUserLoggedIn() ? (
                                                 <Button
                                                     onPress={() => router.push(`/education/quiz/${quiz.slug}`)}
-                                                    className="w-full bg-white text-black hover:bg-gray-100 font-medium flex items-center justify-center gap-2"
-                                                    size="md">
-                                                    <PlayCircle size={18} />
+                                                    className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2 group"
+                                                    size="md"
+                                                >
+                                                    <PlayCircle 
+                                                        size={18} 
+                                                        className="align-middle relative top-[1px] group-hover:scale-110 transition-transform duration-300"
+                                                    />
                                                     Mulai Kuis
                                                 </Button>
                                             ) : (
                                                 <Button
                                                     onPress={modalLogin.onOpen}
-                                                    className="w-full bg-white text-black hover:bg-gray-100 font-medium flex items-center justify-center gap-2"
-                                                    size="md">
-                                                    <PlayCircle size={18} />
+                                                    className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2 group"
+                                                    size="md"
+                                                >
+                                                    <PlayCircle 
+                                                        size={18} 
+                                                        className="align-middle relative top-[1px] group-hover:scale-110 transition-transform duration-300"
+                                                    />
                                                     Login Terlebih Dahulu
                                                 </Button>
                                             )}
                                         </motion.div>
-                                    </CardBody>
-                                </Card>
+                                    </div>
+                                </div>
                             </motion.div>
                         );
                     })
                 ) : (
-                    <div className="text-center text-gray-400 col-span-1 lg:col-span-2">
-                        Tidak ada kuis yang tersedia untuk level ini.
+                    <div className="col-span-1 lg:col-span-2 text-center">
+                        <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border-2 border-white/20 rounded-2xl p-1">
+                            <div className="p-6">
+                                <p className="text-gray-400">Tidak ada kuis yang tersedia untuk level ini.</p>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>

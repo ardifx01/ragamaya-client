@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {Card, CardBody, Button, Chip, Progress, useDisclosure} from "@heroui/react";
-import { Clock, HelpCircle, ChevronLeft, ChevronRight, Send, CheckCircle, Award, BrainCircuit, XCircle, Download, Trophy, AlertTriangle } from "lucide-react";
+import { Clock, HelpCircle, ChevronLeft, ChevronRight, Send, CheckCircle, Award, BrainCircuit, XCircle, Download, Trophy, AlertTriangle, PlayCircle, BookOpen } from "lucide-react";
 import RequestAPI from "@/helper/http";
 import {isUserLoggedIn} from "@/lib/GetUserData";
 import {LoginModal} from "@/components/LoginModal";
@@ -168,8 +168,21 @@ const StartQuizPage = () => {
     };
 
     const capitalizeFirstLetter = (string: string) => {
-        if (!string) return '';
-        return string.charAt(0).toUpperCase() + string.slice(1);
+        const levelMapping: Record<string, string> = {
+            beginner: "Pemula",
+            intermediate: "Menengah",
+            advanced: "Lanjutan",
+        };
+        return levelMapping[string.toLowerCase()] || string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
+    const getLevelColor = (level: string) => {
+        const levelColors: Record<string, string> = {
+            Pemula: "bg-green-500/20 backdrop-blur-sm text-green-300 border border-green-500/30",
+            Menengah: "bg-yellow-500/20 backdrop-blur-sm text-yellow-300 border border-yellow-500/30",
+            Lanjutan: "bg-red-500/20 backdrop-blur-sm text-red-300 border border-red-500/30",
+        };
+        return levelColors[level] || "bg-white/10 backdrop-blur-sm text-white/90 border border-white/20";
     };
 
     const getScoreColor = (score: number) => {
@@ -194,29 +207,29 @@ const StartQuizPage = () => {
         switch (status) {
             case "loading":
                 return (
-                    <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 text-white w-full max-w-2xl">
-                        <CardBody className="p-8 text-center">
+                    <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl w-full max-w-2xl">
+                        <div className="p-8 text-center">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-                            <div className="text-lg">Memuat Detail Kuis...</div>
-                        </CardBody>
-                    </Card>
+                            <div className="text-lg text-white">Memuat Detail Kuis...</div>
+                        </div>
+                    </div>
                 );
 
             case "ready":
                 if (quizDetail?.certificate) {
                     return (
-                        <Card className="bg-slate-800/30 backdrop-blur-md border border-green-500/50 text-white w-full max-w-2xl shadow-lg shadow-green-500/20">
-                            <CardBody className="p-8 text-center">
+                        <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-green-500/50 rounded-2xl shadow-xl shadow-green-500/20 w-full max-w-2xl">
+                            <div className="p-8 text-center">
                                 <CheckCircle size={64} className="text-green-400 mx-auto mb-4" />
                                 <h1 className="text-2xl sm:text-3xl font-bold mb-3 text-white">
                                     Kuis Telah Selesai Dikerjakan
                                 </h1>
-                                <p className="text-slate-300 mb-6">
+                                <p className="text-gray-300 mb-6">
                                     Selamat! Anda telah berhasil menyelesaikan kuis ini sebelumnya.
                                 </p>
 
-                                <div className="bg-slate-700/30 border border-slate-600/30 p-4 rounded-xl mb-6">
-                                    <p className="text-slate-300 mb-1">Skor yang Anda Peroleh:</p>
+                                <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 p-4 rounded-2xl mb-6">
+                                    <p className="text-gray-300 mb-1">Skor yang Anda Peroleh:</p>
                                     <p className={`text-4xl font-bold ${getScoreColor(quizDetail.certificate.score)}`}>
                                         {quizDetail.certificate.score}
                                     </p>
@@ -224,79 +237,88 @@ const StartQuizPage = () => {
 
                                 <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-sm mx-auto">
                                     <Button
-                                        onClick={handleDownloadPreviousCertificate}
-                                        className="w-full bg-yellow-600/80 backdrop-blur-sm text-white font-semibold border border-yellow-500/50 hover:bg-yellow-500/80 hover:border-yellow-400/50 transition-all duration-300"
+                                        onPress={handleDownloadPreviousCertificate}
+                                        className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2"
                                     >
                                         <Download size={18} /> Unduh Sertifikat
                                     </Button>
                                     <Button
-                                        onClick={() => router.push('/edukasi/quiz')}
-                                        className="w-full bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
+                                        onPress={() => router.push('/education')}
+                                        className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300"
                                     >
                                         Kembali ke Daftar Kuis
                                     </Button>
                                 </div>
-                            </CardBody>
-                        </Card>
+                            </div>
+                        </div>
                     );
                 }
 
-                // Jika tidak ada 'certificate', tampilkan halaman mulai kuis seperti biasa
+                const displayLevel = capitalizeFirstLetter(quizDetail?.level || '');
+                
                 return (
-                    <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 text-white w-full max-w-2xl">
-                        <CardBody className="p-6 sm:p-8 text-center">
-                            <Chip
-                                size="sm"
-                                variant="flat"
-                                className="bg-slate-700/50 text-slate-300 border border-slate-600/50 mb-4"
-                            >
-                                {quizDetail?.category.name}
-                            </Chip>
+                    <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 rounded-2xl shadow-xl w-full max-w-2xl">
+                        <div className="p-6 sm:p-8 text-white">
+                            <div className="flex flex-wrap gap-2 mb-4">
+                                <Chip
+                                    size="sm"
+                                    variant="flat"
+                                    className="bg-white/10 backdrop-blur-sm text-white/90 px-3 py-1 rounded-full border border-white/20"
+                                >
+                                    {quizDetail?.category.name}
+                                </Chip>
+                                <Chip
+                                    size="sm"
+                                    variant="flat"
+                                    className={`${getLevelColor(displayLevel)} px-3 py-1 rounded-full`}
+                                >
+                                    {displayLevel}
+                                </Chip>
+                            </div>
+
                             <h1 className="text-2xl sm:text-3xl font-bold mb-3 text-white">
                                 {quizDetail?.title}
                             </h1>
-                            <p className="text-slate-300 mb-6 text-sm sm:text-base">{quizDetail?.desc}</p>
+                            <p className="text-gray-300 mb-8 text-sm sm:text-base leading-relaxed">{quizDetail?.desc}</p>
 
-                            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 text-sm mb-8">
-                                <div className="flex items-center gap-2 bg-slate-700/30 backdrop-blur-sm px-3 py-2 rounded-lg border border-slate-600/30 w-full sm:w-auto justify-center">
-                                    <HelpCircle size={16} className="text-blue-400" />
-                                    <span className="text-slate-300">{quizDetail?.total_questions} Pertanyaan</span>
+                            <div className="flex items-center justify-between text-sm text-gray-300 mb-8">
+                                <div className="flex items-center gap-1">
+                                    <BookOpen size={14} className="align-middle relative top-[1px]" />
+                                    <span className="leading-none">{quizDetail?.total_questions} pertanyaan</span>
                                 </div>
-                                <div className="flex items-center gap-2 bg-slate-700/30 backdrop-blur-sm px-3 py-2 rounded-lg border border-slate-600/30 w-full sm:w-auto justify-center">
-                                    <Award size={16} className="text-yellow-400" />
-                                    <span className="text-slate-300">Level {capitalizeFirstLetter(quizDetail?.level || '')}</span>
-                                </div>
-                                <div className="flex items-center gap-2 bg-slate-700/30 backdrop-blur-sm px-3 py-2 rounded-lg border border-slate-600/30 w-full sm:w-auto justify-center">
-                                    <Clock size={16} className="text-green-400" />
-                                    <span className="text-slate-300">{quizDetail?.estimate} Menit</span>
+                                <div className="flex items-center gap-1">
+                                    <Clock size={14} className="align-middle relative top-[1px]" />
+                                    <span className="leading-none">{quizDetail?.estimate} menit</span>
                                 </div>
                             </div>
 
                             {isUserLoggedIn() ? (
                                 <Button
                                     onPress={handleStartQuiz}
-                                    className="w-full bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
+                                    className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2 group"
                                 >
+                                    <PlayCircle size={18} className="align-middle relative top-[1px] group-hover:scale-110 transition-transform duration-300" />
                                     Mulai Kuis
                                 </Button>
                             ) : (
                                 <Button
                                     onPress={modalLogin.onOpen}
-                                    className="w-full bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
+                                    className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2 group"
                                 >
+                                    <PlayCircle size={18} className="align-middle relative top-[1px] group-hover:scale-110 transition-transform duration-300" />
                                     Login Terlebih Dahulu
                                 </Button>
                             )}
-                        </CardBody>
-                    </Card>
+                        </div>
+                    </div>
                 );
 
             case "active":
                 return (
                     <div className="w-full max-w-3xl">
-                        {/* Header Card - Diperbaiki untuk responsive */}
-                        <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 text-white mb-6">
-                            <CardBody className="p-3 sm:p-4">
+                        {/* Header Card */}
+                        <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 rounded-2xl text-white mb-6 md:mt-20 mt-0">
+                            <div className="p-3 sm:p-4">
                                 {/* Mobile Layout */}
                                 <div className="flex flex-col sm:hidden space-y-3">
                                     <div className="flex items-center justify-between">
@@ -309,13 +331,13 @@ const StartQuizPage = () => {
                                         <Chip
                                             size="sm"
                                             variant="flat"
-                                            className="bg-slate-700/50 border border-slate-600/50 text-slate-300 text-xs flex-shrink-0 ml-2"
+                                            className="bg-white/10 backdrop-blur-sm text-white/90 px-3 py-1 rounded-full border border-white/20 text-xs flex-shrink-0 ml-2"
                                         >
                                             {quizDetail?.category.name}
                                         </Chip>
                                     </div>
                                     <div className="flex items-center justify-center">
-                                        <div className="flex items-center gap-2 bg-red-600/80 backdrop-blur-sm border border-red-500/50 text-white font-bold px-3 py-2 rounded-lg">
+                                        <div className="flex items-center gap-2 bg-red-600/80 backdrop-blur-sm border border-red-500/50 text-white font-bold px-3 py-2 rounded-2xl">
                                             <Clock size={18} />
                                             <span className="text-lg font-mono">{formatTime(timeLeft)}</span>
                                         </div>
@@ -334,30 +356,30 @@ const StartQuizPage = () => {
                                         <Chip
                                             size="sm"
                                             variant="flat"
-                                            className="bg-slate-700/50 border border-slate-600/50 text-slate-300"
+                                            className="bg-white/10 backdrop-blur-sm text-white/90 px-3 py-1 rounded-full border border-white/20"
                                         >
                                             {quizDetail?.category.name}
                                         </Chip>
-                                        <div className="flex items-center gap-2 bg-red-600/80 backdrop-blur-sm border border-red-500/50 text-white font-bold px-3 py-1 rounded-md">
+                                        <div className="flex items-center gap-2 bg-red-600/80 backdrop-blur-sm border border-red-500/50 text-white font-bold px-3 py-1 rounded-2xl">
                                             <Clock size={16} />
                                             <span>{formatTime(timeLeft)}</span>
                                         </div>
                                     </div>
                                 </div>
-                            </CardBody>
-                        </Card>
+                            </div>
+                        </div>
 
                         {/* Main Question Card */}
-                        <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 text-white">
-                            <CardBody className="p-4 sm:p-6 lg:p-8">
+                        <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 rounded-2xl text-white">
+                            <div className="p-4 sm:p-6 lg:p-8">
                                 <div className="mb-4 sm:mb-6">
-                                    <p className="text-slate-300 text-xs sm:text-sm mb-2">
+                                    <p className="text-gray-300 text-xs sm:text-sm mb-2">
                                         Pertanyaan {currentQuestionIndex + 1} dari {quizDetail?.total_questions}
                                     </p>
                                     <Progress
                                         value={((currentQuestionIndex + 1) / quizDetail!.total_questions) * 100}
                                         color="primary"
-                                        className="[&>div]:bg-blue-500 bg-slate-700/50 backdrop-blur-sm rounded-full"
+                                        className="[&>div]:bg-blue-500 bg-white/20 backdrop-blur-sm rounded-full"
                                     />
                                 </div>
                                 <h3 className="text-lg sm:text-xl lg:text-2xl font-medium mb-6 sm:mb-8 min-h-[2rem] sm:min-h-[3rem] text-white leading-relaxed">
@@ -371,10 +393,10 @@ const StartQuizPage = () => {
                                             <Button
                                                 key={index}
                                                 onPress={() => handleAnswerSelect(index)}
-                                                className={`flex justify-between items-center text-left h-auto py-3 sm:py-4 px-4 sm:px-5 whitespace-normal transition-all duration-300 backdrop-blur-sm text-sm sm:text-base
+                                                className={`flex justify-between items-center text-left h-auto py-3 sm:py-4 px-4 sm:px-5 whitespace-normal transition-all duration-300 backdrop-blur-sm text-sm sm:text-base rounded-2xl
                                                     ${isSelected
                                                     ? 'bg-blue-600/60 text-white border border-blue-500/60'
-                                                    : 'bg-slate-700/30 text-slate-300 border border-slate-600/50 hover:border-slate-500/50 hover:bg-slate-600/40'}`}
+                                                    : 'bg-white/10 text-gray-300 border border-white/20 hover:border-white/40 hover:bg-white/5'}`}
                                                 variant="bordered"
                                             >
                                                 <span className="flex-1 text-left leading-relaxed">{option}</span>
@@ -383,14 +405,14 @@ const StartQuizPage = () => {
                                         )
                                     })}
                                 </div>
-                            </CardBody>
-                        </Card>
+                            </div>
+                        </div>
 
                         {/* Navigation Buttons */}
                         <div className="flex flex-col sm:flex-row justify-between mt-4 sm:mt-6 gap-3 sm:gap-4">
                             <Button
                                 variant="bordered"
-                                className="w-full sm:w-auto bg-slate-700/30 backdrop-blur-sm text-slate-300 border border-slate-600/50 hover:bg-slate-600/40 hover:border-slate-500/50 transition-all duration-300"
+                                className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-gray-300 border border-white/20 hover:bg-white/5 hover:border-white/40 transition-all duration-300 rounded-2xl"
                                 onPress={handlePrevQuestion}
                                 disabled={currentQuestionIndex === 0}
                             >
@@ -398,14 +420,14 @@ const StartQuizPage = () => {
                             </Button>
                             {currentQuestionIndex === quizDetail!.total_questions - 1 ? (
                                 <Button
-                                    className="w-full sm:w-auto bg-green-600/80 backdrop-blur-sm text-white font-semibold border border-green-500/50 hover:bg-green-500/80 hover:border-green-400/50 transition-all duration-300"
+                                    className="w-full sm:w-auto bg-green-600/80 backdrop-blur-sm text-white font-semibold border border-green-500/50 hover:bg-green-500/80 hover:border-green-400/50 transition-all duration-300 rounded-2xl"
                                     onPress={handleSubmitQuiz}
                                 >
                                     Kirim Jawaban <Send size={18}/>
                                 </Button>
                             ) : (
                                 <Button
-                                    className="w-full sm:w-auto bg-blue-600/80 backdrop-blur-sm text-white border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
+                                    className="w-full sm:w-auto text-white border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all duration-300 rounded-2xl"
                                     onPress={handleNextQuestion}
                                 >
                                     Selanjutnya <ChevronRight size={18}/>
@@ -417,12 +439,12 @@ const StartQuizPage = () => {
 
             case "submitting":
                 return (
-                    <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 text-white w-full max-w-2xl">
-                        <CardBody className="p-8 text-center">
+                    <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 rounded-2xl text-white w-full max-w-2xl">
+                        <div className="p-8 text-center">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
                             <div className="text-lg">Mengirim jawaban...</div>
-                        </CardBody>
-                    </Card>
+                        </div>
+                    </div>
                 );
 
             case "completed":
@@ -430,12 +452,12 @@ const StartQuizPage = () => {
                 const score = quizResult?.score || 0;
 
                 return (
-                    <Card className={`bg-slate-800/30 backdrop-blur-md border transition-all duration-300 text-white w-full max-w-2xl ${
+                    <div className={`bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border transition-all duration-300 rounded-2xl text-white w-full max-w-2xl ${
                         isSuccess
                             ? 'border-green-500/50 hover:border-green-400/50 shadow-lg shadow-green-500/20'
                             : 'border-red-500/50 hover:border-red-400/50 shadow-lg shadow-red-500/20'
                     }`}>
-                        <CardBody className="p-6 sm:p-8 text-center">
+                        <div className="p-6 sm:p-8 text-center">
                             {/* Icon and Status */}
                             <div className="mb-6">
                                 {isSuccess ? (
@@ -448,7 +470,7 @@ const StartQuizPage = () => {
                                         </div>
                                         <Chip
                                             size="sm"
-                                            className="bg-green-600/20 text-green-300 border border-green-500/30"
+                                            className="bg-green-600/20 text-green-300 border border-green-500/30 rounded-full"
                                         >
                                             LULUS
                                         </Chip>
@@ -463,7 +485,7 @@ const StartQuizPage = () => {
                                         </div>
                                         <Chip
                                             size="sm"
-                                            className="bg-red-600/20 text-red-300 border border-red-500/30"
+                                            className="bg-red-600/20 text-red-300 border border-red-500/30 rounded-full"
                                         >
                                             TIDAK LULUS
                                         </Chip>
@@ -477,17 +499,17 @@ const StartQuizPage = () => {
                             </h1>
 
                             {/* Message */}
-                            <p className="text-slate-300 mb-6">
+                            <p className="text-gray-300 mb-6">
                                 {getScoreMessage(quizResult?.match || "failed", score)}
                             </p>
 
                             {/* Score Display */}
-                            <div className={`backdrop-blur-sm border p-6 rounded-xl mb-6 ${
+                            <div className={`backdrop-blur-sm border p-6 rounded-2xl mb-6 ${
                                 isSuccess
                                     ? 'bg-green-700/20 border-green-600/30'
                                     : 'bg-red-700/20 border-red-600/30'
                             }`}>
-                                <p className="text-lg text-slate-300 mb-2">Skor Anda:</p>
+                                <p className="text-lg text-gray-300 mb-2">Skor Anda:</p>
                                 <p className={`text-4xl sm:text-5xl font-bold ${getScoreColor(score)}`}>
                                     {Math.round(score)}
                                 </p>
@@ -495,24 +517,24 @@ const StartQuizPage = () => {
                                     <Progress
                                         value={score}
                                         color={isSuccess ? "success" : "danger"}
-                                        className="max-w-md mx-auto"
+                                        className="max-w-md mx-auto rounded-full"
                                     />
                                 </div>
                             </div>
 
                             {/* Certificate Section - Only for Success */}
                             {isSuccess && quizResult?.certificate && (
-                                <div className="bg-gradient-to-r from-yellow-600/10 to-orange-600/10 border border-yellow-500/30 p-4 rounded-xl mb-6">
+                                <div className="bg-gradient-to-r from-yellow-600/10 to-orange-600/10 border border-yellow-500/30 p-4 rounded-2xl mb-6">
                                     <div className="flex items-center justify-center gap-2 mb-3">
                                         <Award size={20} className="text-yellow-400" />
                                         <span className="text-yellow-300 font-semibold">Sertifikat Tersedia</span>
                                     </div>
-                                    <p className="text-slate-300 text-sm mb-4">
+                                    <p className="text-gray-300 text-sm mb-4">
                                         Anda telah memenuhi syarat untuk mendapatkan sertifikat!
                                     </p>
                                     <Button
                                         onPress={handleDownloadCertificate}
-                                        className="bg-yellow-600/80 backdrop-blur-sm text-white font-semibold border border-yellow-500/50 hover:bg-yellow-500/80 hover:border-yellow-400/50 transition-all duration-300"
+                                        className="bg-yellow-600/80 backdrop-blur-sm text-white font-semibold border border-yellow-500/50 hover:bg-yellow-500/80 hover:border-yellow-400/50 transition-all duration-300 rounded-2xl"
                                     >
                                         <Download size={18} /> Unduh Sertifikat
                                     </Button>
@@ -523,14 +545,14 @@ const StartQuizPage = () => {
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <Button
                                     onPress={() => router.push('/education/quiz')}
-                                    className="flex-1 bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
+                                    className="flex-1 text-white border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all duration-300 rounded-2xl font-bold py-6"
                                 >
                                     Kembali ke Daftar Kuis
                                 </Button>
                                 {!isSuccess && (
                                     <Button
                                         onPress={() => window.location.reload()}
-                                        className="flex-1 bg-orange-600/80 backdrop-blur-sm text-white font-bold border border-orange-500/50 hover:bg-orange-500/80 hover:border-orange-400/50 transition-all duration-300"
+                                        className="flex-1 bg-orange-600/80 backdrop-blur-sm text-white font-bold border border-orange-500/50 hover:bg-orange-500/80 hover:border-orange-400/50 transition-all duration-300 rounded-2xl py-6"
                                     >
                                         Coba Lagi
                                     </Button>
@@ -539,14 +561,14 @@ const StartQuizPage = () => {
 
                             {/* Additional Info for Failed Quiz */}
                             {!isSuccess && (
-                                <div className="mt-6 p-4 bg-slate-700/30 border border-slate-600/30 rounded-xl">
-                                    <p className="text-slate-300 text-sm">
+                                <div className="mt-6 p-4 bg-white/10 border border-white/20 rounded-2xl">
+                                    <p className="text-gray-300 text-sm">
                                         <strong>Tips:</strong> Pelajari materi dengan lebih teliti dan pastikan Anda memahami setiap konsep sebelum mencoba lagi.
                                     </p>
                                 </div>
                             )}
-                        </CardBody>
-                    </Card>
+                        </div>
+                    </div>
                 );
         }
     };
@@ -559,11 +581,11 @@ const StartQuizPage = () => {
                 <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-sky-600/40 rounded-full filter blur-3xl opacity-50 animate-pulse"></div>
                 <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-indigo-600/40 rounded-full filter blur-3xl opacity-50 animate-pulse [animation-delay:4000ms]"></div>
 
-                <Card className="bg-black/30 backdrop-blur-md border border-red-500/50 text-white w-full max-w-2xl shadow-2xl shadow-red-500/20 z-10">
-                    <CardBody className="p-8 text-center">
+                <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-red-500/50 rounded-2xl text-white w-full max-w-2xl shadow-2xl shadow-red-500/20 z-10">
+                    <div className="p-8 text-center">
                         <div className="text-red-400 text-lg font-semibold">{error}</div>
-                    </CardBody>
-                </Card>
+                    </div>
+                </div>
             </div>
         );
     }

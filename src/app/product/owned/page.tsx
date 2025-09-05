@@ -1,5 +1,5 @@
 import Header from '@/components/ProductOwned/Header'
-import OwnedProducts from '@/components/ProductOwned/PorductOwned'
+import OwnedProducts from '@/components/ProductOwned/ProductOwned'
 import React from 'react'
 
 const ProductOwnedPage = () => {

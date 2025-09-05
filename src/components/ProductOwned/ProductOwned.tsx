@@ -237,7 +237,7 @@ const OwnedProducts: React.FC<OwnedProductsProps> = ({ onLoadingChange }) => {
                                                                             key={fileIndex}
                                                                             whileTap={{ scale: 0.98 }}
                                                                             onClick={() => handleDownload(file, product.name)}
-                                                                            className="w-full flex items-center justify-between p-2 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 hover:border-white/20 transition-all duration-200 group/file hover:scale-102"
+                                                                            className="w-full flex items-center justify-between p-2 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 hover:border-white/20 transition-all duration-200 group/file"
                                                                         >
                                                                             <div className="flex items-center gap-2">
                                                                                 <div className="w-6 h-6 bg-blue-500/20 rounded flex items-center justify-center">

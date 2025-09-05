@@ -24,7 +24,8 @@ const Footer = () => {
                         <div className="flex flex-col gap-4">
                             <h1>Repositori</h1>
                             <Link
-                                href="https://github.com/"
+                                href="https://github.com/ragamaya"
+                                target="_blank" 
                                 className="hover:underline text-gray-400 text-sm"
                             >
                                 Github
@@ -33,18 +34,33 @@ const Footer = () => {
                         <div className="flex flex-col gap-4">
                             <h1>Developers</h1>
                             <Link
-                                href="https://github.com/"
+                                href="https://github.com/ramadiaz"
+                                target="_blank" 
                                 className="hover:underline text-gray-400 text-sm"
                             >
-                                Tim Kami
+                                Rama Diaz
+                            </Link>
+                            <Link
+                                href="https://github.com/Fahry169"
+                                target="_blank" 
+                                className="hover:underline text-gray-400 text-sm"
+                            >
+                                Fahry Firdaus
+                            </Link>
+                            <Link
+                                href="https://github.com/vinss-droid"
+                                target="_blank" 
+                                className="hover:underline text-gray-400 text-sm"
+                            >
+                                Kevin Sipahutar
                             </Link>
                         </div>
                         <div className="flex flex-col gap-4">
                             <h1>LEGAL</h1>
-                            <Link href="#" className="hover:underline text-gray-400 text-sm">
+                            <Link href="/privacy-policy" target="_blank" className="hover:underline text-gray-400 text-sm">
                                 Privacy Policy
                             </Link>
-                            <Link href="#" className="hover:underline text-gray-400 text-sm">
+                            <Link href="/terms" target="_blank" className="hover:underline text-gray-400 text-sm">
                                 Terms & Conditions
                             </Link>
                         </div>

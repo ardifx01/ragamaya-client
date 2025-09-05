@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
-import {Card, CardBody, Button, Chip, Progress, useDisclosure} from "@heroui/react";
-import { Clock, HelpCircle, ChevronLeft, ChevronRight, Send, CheckCircle, Award, BrainCircuit, XCircle, Download, Trophy, AlertTriangle, PlayCircle, BookOpen } from "lucide-react";
+import {Button, Chip, Progress, useDisclosure} from "@heroui/react";
+// 1. Menambahkan icon Share2
+import { Clock, ChevronLeft, ChevronRight, Send, CheckCircle, Award, BrainCircuit, XCircle, Download, Trophy, AlertTriangle, PlayCircle, BookOpen, Share2 } from "lucide-react";
 import RequestAPI from "@/helper/http";
 import {isUserLoggedIn} from "@/lib/GetUserData";
 import {LoginModal} from "@/components/LoginModal";
@@ -56,6 +57,9 @@ const StartQuizPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
 
+    // 2. State untuk feedback copy link
+    const [isCopied, setIsCopied] = useState(false);
+
     // Modal
     const modalLogin = useDisclosure();
 
@@ -66,7 +70,6 @@ const StartQuizPage = () => {
                 const response = await RequestAPI(`/quiz/${slug}`, "get");
                 setQuizDetail(response.body);
 
-                // Hanya set timer dan jawaban jika kuis belum dikerjakan
                 if (!response.body.certificate) {
                     setTimeLeft(response.body.estimate * 60);
                     setAnswers(new Array(response.body.total_questions).fill(null));
@@ -139,23 +142,34 @@ const StartQuizPage = () => {
 
     const handlePrevQuestion = () => {
         if (currentQuestionIndex > 0) {
-            setCurrentQuestionIndex(currentQuestionIndex - 1);
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
         }
     };
 
-    // Handler untuk mengunduh sertifikat dari halaman 'completed'
     const handleDownloadCertificate = () => {
         if (quizResult?.certificate?.certificate_url) {
             window.open(quizResult.certificate.certificate_url, '_blank');
         }
     };
 
-    // Handler untuk mengunduh sertifikat dari halaman 'ready' (jika sudah selesai sebelumnya)
     const handleDownloadPreviousCertificate = () => {
         if (quizDetail?.certificate?.certificate_url) {
             window.open(quizDetail.certificate.certificate_url, '_blank');
         }
     };
+
+    // 3. Fungsi untuk menyalin link sertifikat
+    const handleShareCertificate = useCallback((uuid: string) => {
+        if (!uuid) return;
+        const certificateUrl = `${window.location.origin}/certificate/${uuid}`;
+        navigator.clipboard.writeText(certificateUrl).then(() => {
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2500); // Reset feedback setelah 2.5 detik
+        }).catch(err => {
+            console.error('Gagal menyalin link:', err);
+            alert("Gagal menyalin link ke clipboard.");
+        });
+    }, []);
 
     const currentQuestion = useMemo(() => {
         return quizDetail?.questions[currentQuestionIndex];
@@ -207,6 +221,7 @@ const StartQuizPage = () => {
         switch (status) {
             case "loading":
                 return (
+                    // ... (tidak ada perubahan)
                     <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl w-full max-w-2xl">
                         <div className="p-8 text-center">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
@@ -235,18 +250,25 @@ const StartQuizPage = () => {
                                     </p>
                                 </div>
 
-                                <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-sm mx-auto">
+                                {/* 4. Menambahkan tombol Share di sini */}
+                                <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-lg mx-auto">
                                     <Button
                                         onPress={handleDownloadPreviousCertificate}
                                         className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2"
                                     >
-                                        <Download size={18} /> Unduh Sertifikat
+                                        <Download size={18} /> Unduh
+                                    </Button>
+                                    <Button
+                                        onPress={() => handleShareCertificate(quizDetail!.certificate!.uuid)}
+                                        className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center gap-2"
+                                    >
+                                        {isCopied ? <><CheckCircle size={18} /> Tautan Disalin!</> : <><Share2 size={18} /> Bagikan</>}
                                     </Button>
                                     <Button
                                         onPress={() => router.push('/education')}
-                                        className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300"
+                                        className="w-full text-white border border-white/20 px-5 py-6 rounded-2xl font-medium hover:border-white/40 hover:bg-white/5 transition-all duration-300 flex items-center justify-center"
                                     >
-                                        Kembali ke Daftar Kuis
+                                        Daftar Kuis
                                     </Button>
                                 </div>
                             </div>
@@ -254,8 +276,8 @@ const StartQuizPage = () => {
                     );
                 }
 
+                // ... (tidak ada perubahan)
                 const displayLevel = capitalizeFirstLetter(quizDetail?.level || '');
-                
                 return (
                     <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 hover:border-white/40 transition-all duration-300 rounded-2xl shadow-xl w-full max-w-2xl">
                         <div className="p-6 sm:p-8 text-white">
@@ -315,6 +337,7 @@ const StartQuizPage = () => {
 
             case "active":
                 return (
+                    // ... (tidak ada perubahan)
                     <div className="w-full max-w-3xl">
                         {/* Header Card */}
                         <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 rounded-2xl text-white mb-6 md:mt-20 mt-0">
@@ -439,6 +462,7 @@ const StartQuizPage = () => {
 
             case "submitting":
                 return (
+                    // ... (tidak ada perubahan)
                     <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border border-white/20 rounded-2xl text-white w-full max-w-2xl">
                         <div className="p-8 text-center">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto mb-4"></div>
@@ -532,12 +556,21 @@ const StartQuizPage = () => {
                                     <p className="text-gray-300 text-sm mb-4">
                                         Anda telah memenuhi syarat untuk mendapatkan sertifikat!
                                     </p>
-                                    <Button
-                                        onPress={handleDownloadCertificate}
-                                        className="bg-yellow-600/80 backdrop-blur-sm text-white font-semibold border border-yellow-500/50 hover:bg-yellow-500/80 hover:border-yellow-400/50 transition-all duration-300 rounded-2xl"
-                                    >
-                                        <Download size={18} /> Unduh Sertifikat
-                                    </Button>
+                                    {/* 4. Menambahkan tombol Share di sini */}
+                                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                        <Button
+                                            onPress={handleDownloadCertificate}
+                                            className="w-full sm:w-auto flex-1 bg-yellow-600/80 backdrop-blur-sm text-white font-semibold border border-yellow-500/50 hover:bg-yellow-500/80 hover:border-yellow-400/50 transition-all duration-300 rounded-2xl flex items-center justify-center gap-2 py-3"
+                                        >
+                                            <Download size={18} /> Unduh Sertifikat
+                                        </Button>
+                                        <Button
+                                            onPress={() => handleShareCertificate(quizResult!.certificate!.uuid)}
+                                            className="w-full sm:w-auto flex-1 bg-blue-600/80 backdrop-blur-sm text-white font-semibold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300 rounded-2xl flex items-center justify-center gap-2 py-3"
+                                        >
+                                            {isCopied ? <><CheckCircle size={18} /> Link Disalin!</> : <><Share2 size={18} /> Bagikan Sertifikat</>}
+                                        </Button>
+                                    </div>
                                 </div>
                             )}
 
@@ -573,6 +606,8 @@ const StartQuizPage = () => {
         }
     };
 
+    // ... sisa komponen (tidak ada perubahan)
+
     if (error) {
         return (
             <div className="min-h-screen text-white p-4 flex flex-col items-center justify-center bg-gray-900 relative overflow-hidden">
@@ -592,7 +627,7 @@ const StartQuizPage = () => {
 
     return <>
         {/* Menggunakan padding-top untuk menghindari navbar yang fixed */}
-        <div className="min-h-screen text-white p-4 sm:p-6 md:p-8 pt-20 sm:pt-24 flex flex-col items-center justify-center bg-gray-900 relative overflow-hidden">
+        <div className="min-h-screen text-white p-4 sm:p-6 md:p-8 pt-32 sm:pt-40 flex flex-col items-center justify-center bg-gray-900 relative overflow-hidden">
             {/* Background Elements */}
             <div className="absolute top-0 left-0 w-full h-full bg-black"></div>
             <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-sky-600/40 rounded-full filter blur-3xl opacity-50 animate-pulse"></div>

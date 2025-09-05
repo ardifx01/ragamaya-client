@@ -25,6 +25,7 @@ interface QuizDetail {
     category: {
         name: string;
     };
+    certificate?: Certificate;
 }
 
 interface Certificate {
@@ -64,8 +65,13 @@ const StartQuizPage = () => {
             try {
                 const response = await RequestAPI(`/quiz/${slug}`, "get");
                 setQuizDetail(response.body);
-                setTimeLeft(response.body.estimate * 60);
-                setAnswers(new Array(response.body.total_questions).fill(null));
+
+                // Hanya set timer dan jawaban jika kuis belum dikerjakan
+                if (!response.body.certificate) {
+                    setTimeLeft(response.body.estimate * 60);
+                    setAnswers(new Array(response.body.total_questions).fill(null));
+                }
+
                 setStatus("ready");
             } catch (err) {
                 setError("Gagal memuat detail kuis. Pastikan URL valid.");
@@ -137,9 +143,17 @@ const StartQuizPage = () => {
         }
     };
 
+    // Handler untuk mengunduh sertifikat dari halaman 'completed'
     const handleDownloadCertificate = () => {
         if (quizResult?.certificate?.certificate_url) {
             window.open(quizResult.certificate.certificate_url, '_blank');
+        }
+    };
+
+    // Handler untuk mengunduh sertifikat dari halaman 'ready' (jika sudah selesai sebelumnya)
+    const handleDownloadPreviousCertificate = () => {
+        if (quizDetail?.certificate?.certificate_url) {
+            window.open(quizDetail.certificate.certificate_url, '_blank');
         }
     };
 
@@ -189,9 +203,48 @@ const StartQuizPage = () => {
                 );
 
             case "ready":
+                if (quizDetail?.certificate) {
+                    return (
+                        <Card className="bg-slate-800/30 backdrop-blur-md border border-green-500/50 text-white w-full max-w-2xl shadow-lg shadow-green-500/20">
+                            <CardBody className="p-8 text-center">
+                                <CheckCircle size={64} className="text-green-400 mx-auto mb-4" />
+                                <h1 className="text-2xl sm:text-3xl font-bold mb-3 text-white">
+                                    Kuis Telah Selesai Dikerjakan
+                                </h1>
+                                <p className="text-slate-300 mb-6">
+                                    Selamat! Anda telah berhasil menyelesaikan kuis ini sebelumnya.
+                                </p>
+
+                                <div className="bg-slate-700/30 border border-slate-600/30 p-4 rounded-xl mb-6">
+                                    <p className="text-slate-300 mb-1">Skor yang Anda Peroleh:</p>
+                                    <p className={`text-4xl font-bold ${getScoreColor(quizDetail.certificate.score)}`}>
+                                        {quizDetail.certificate.score}
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-sm mx-auto">
+                                    <Button
+                                        onClick={handleDownloadPreviousCertificate}
+                                        className="w-full bg-yellow-600/80 backdrop-blur-sm text-white font-semibold border border-yellow-500/50 hover:bg-yellow-500/80 hover:border-yellow-400/50 transition-all duration-300"
+                                    >
+                                        <Download size={18} /> Unduh Sertifikat
+                                    </Button>
+                                    <Button
+                                        onClick={() => router.push('/edukasi/quiz')}
+                                        className="w-full bg-blue-600/80 backdrop-blur-sm text-white font-bold border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
+                                    >
+                                        Kembali ke Daftar Kuis
+                                    </Button>
+                                </div>
+                            </CardBody>
+                        </Card>
+                    );
+                }
+
+                // Jika tidak ada 'certificate', tampilkan halaman mulai kuis seperti biasa
                 return (
                     <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 text-white w-full max-w-2xl">
-                        <CardBody className="p-8 text-center">
+                        <CardBody className="p-6 sm:p-8 text-center">
                             <Chip
                                 size="sm"
                                 variant="flat"
@@ -199,21 +252,21 @@ const StartQuizPage = () => {
                             >
                                 {quizDetail?.category.name}
                             </Chip>
-                            <h1 className="text-3xl font-bold mb-3 text-white">
+                            <h1 className="text-2xl sm:text-3xl font-bold mb-3 text-white">
                                 {quizDetail?.title}
                             </h1>
-                            <p className="text-slate-300 mb-6">{quizDetail?.desc}</p>
+                            <p className="text-slate-300 mb-6 text-sm sm:text-base">{quizDetail?.desc}</p>
 
-                            <div className="flex justify-center gap-6 text-sm mb-8">
-                                <div className="flex items-center gap-2 bg-slate-700/30 backdrop-blur-sm px-3 py-2 rounded-lg border border-slate-600/30">
+                            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 text-sm mb-8">
+                                <div className="flex items-center gap-2 bg-slate-700/30 backdrop-blur-sm px-3 py-2 rounded-lg border border-slate-600/30 w-full sm:w-auto justify-center">
                                     <HelpCircle size={16} className="text-blue-400" />
                                     <span className="text-slate-300">{quizDetail?.total_questions} Pertanyaan</span>
                                 </div>
-                                <div className="flex items-center gap-2 bg-slate-700/30 backdrop-blur-sm px-3 py-2 rounded-lg border border-slate-600/30">
+                                <div className="flex items-center gap-2 bg-slate-700/30 backdrop-blur-sm px-3 py-2 rounded-lg border border-slate-600/30 w-full sm:w-auto justify-center">
                                     <Award size={16} className="text-yellow-400" />
                                     <span className="text-slate-300">Level {capitalizeFirstLetter(quizDetail?.level || '')}</span>
                                 </div>
-                                <div className="flex items-center gap-2 bg-slate-700/30 backdrop-blur-sm px-3 py-2 rounded-lg border border-slate-600/30">
+                                <div className="flex items-center gap-2 bg-slate-700/30 backdrop-blur-sm px-3 py-2 rounded-lg border border-slate-600/30 w-full sm:w-auto justify-center">
                                     <Clock size={16} className="text-green-400" />
                                     <span className="text-slate-300">{quizDetail?.estimate} Menit</span>
                                 </div>
@@ -241,36 +294,64 @@ const StartQuizPage = () => {
             case "active":
                 return (
                     <div className="w-full max-w-3xl">
-                        {/* Header Card */}
-                        <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 text-white mb-6">
-                            <CardBody className="p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-                                <div className="flex items-center gap-3">
-                                    <BrainCircuit className="text-blue-400" size={24}/>
-                                    <h2 className="text-lg font-semibold truncate text-white">
-                                        {quizDetail?.title}
-                                    </h2>
+                        {/* Header Card - Diperbaiki untuk responsive */}
+                        <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 text-white mb-6">
+                            <CardBody className="p-3 sm:p-4">
+                                {/* Mobile Layout */}
+                                <div className="flex flex-col sm:hidden space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                                            <BrainCircuit className="text-blue-400 flex-shrink-0" size={20}/>
+                                            <h2 className="text-sm font-semibold text-white truncate">
+                                                {quizDetail?.title}
+                                            </h2>
+                                        </div>
+                                        <Chip
+                                            size="sm"
+                                            variant="flat"
+                                            className="bg-slate-700/50 border border-slate-600/50 text-slate-300 text-xs flex-shrink-0 ml-2"
+                                        >
+                                            {quizDetail?.category.name}
+                                        </Chip>
+                                    </div>
+                                    <div className="flex items-center justify-center">
+                                        <div className="flex items-center gap-2 bg-red-600/80 backdrop-blur-sm border border-red-500/50 text-white font-bold px-3 py-2 rounded-lg">
+                                            <Clock size={18} />
+                                            <span className="text-lg font-mono">{formatTime(timeLeft)}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <Chip
-                                        size="sm"
-                                        variant="flat"
-                                        className="bg-slate-700/50 border border-slate-600/50 text-slate-300"
-                                    >
-                                        {quizDetail?.category.name}
-                                    </Chip>
-                                    <div className="flex items-center gap-2 bg-red-600/80 backdrop-blur-sm border border-red-500/50 text-white font-bold px-3 py-1 rounded-md">
-                                        <Clock size={16} />
-                                        <span>{formatTime(timeLeft)}</span>
+
+                                {/* Desktop Layout */}
+                                <div className="hidden sm:flex justify-between items-center">
+                                    <div className="flex items-center gap-3">
+                                        <BrainCircuit className="text-blue-400" size={24}/>
+                                        <h2 className="text-lg font-semibold text-white">
+                                            {quizDetail?.title}
+                                        </h2>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <Chip
+                                            size="sm"
+                                            variant="flat"
+                                            className="bg-slate-700/50 border border-slate-600/50 text-slate-300"
+                                        >
+                                            {quizDetail?.category.name}
+                                        </Chip>
+                                        <div className="flex items-center gap-2 bg-red-600/80 backdrop-blur-sm border border-red-500/50 text-white font-bold px-3 py-1 rounded-md">
+                                            <Clock size={16} />
+                                            <span>{formatTime(timeLeft)}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </CardBody>
                         </Card>
 
                         {/* Main Question Card */}
-                        <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 text-white">
-                            <CardBody className="p-8">
-                                <div className="mb-6">
-                                    <p className="text-slate-300 text-sm mb-2">
+                        <Card className="bg-slate-800/30 backdrop-blur-md border border-slate-700/50 text-white">
+                            <CardBody className="p-4 sm:p-6 lg:p-8">
+                                <div className="mb-4 sm:mb-6">
+                                    <p className="text-slate-300 text-xs sm:text-sm mb-2">
                                         Pertanyaan {currentQuestionIndex + 1} dari {quizDetail?.total_questions}
                                     </p>
                                     <Progress
@@ -279,25 +360,25 @@ const StartQuizPage = () => {
                                         className="[&>div]:bg-blue-500 bg-slate-700/50 backdrop-blur-sm rounded-full"
                                     />
                                 </div>
-                                <h3 className="text-2xl font-medium mb-8 min-h-[64px] text-white">
+                                <h3 className="text-lg sm:text-xl lg:text-2xl font-medium mb-6 sm:mb-8 min-h-[2rem] sm:min-h-[3rem] text-white leading-relaxed">
                                     {currentQuestion?.question}
                                 </h3>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                                     {currentQuestion?.options.map((option, index) => {
                                         const isSelected = answers[currentQuestionIndex] === index;
                                         return (
                                             <Button
                                                 key={index}
                                                 onPress={() => handleAnswerSelect(index)}
-                                                className={`flex justify-between items-center text-left h-auto py-4 px-5 whitespace-normal transition-all duration-300 backdrop-blur-sm
+                                                className={`flex justify-between items-center text-left h-auto py-3 sm:py-4 px-4 sm:px-5 whitespace-normal transition-all duration-300 backdrop-blur-sm text-sm sm:text-base
                                                     ${isSelected
                                                     ? 'bg-blue-600/60 text-white border border-blue-500/60'
                                                     : 'bg-slate-700/30 text-slate-300 border border-slate-600/50 hover:border-slate-500/50 hover:bg-slate-600/40'}`}
                                                 variant="bordered"
                                             >
-                                                <span>{option}</span>
-                                                {isSelected && <CheckCircle size={20} className="text-blue-300" />}
+                                                <span className="flex-1 text-left leading-relaxed">{option}</span>
+                                                {isSelected && <CheckCircle size={18} className="text-blue-300 flex-shrink-0 ml-2" />}
                                             </Button>
                                         )
                                     })}
@@ -306,10 +387,10 @@ const StartQuizPage = () => {
                         </Card>
 
                         {/* Navigation Buttons */}
-                        <div className="flex justify-between mt-6">
+                        <div className="flex flex-col sm:flex-row justify-between mt-4 sm:mt-6 gap-3 sm:gap-4">
                             <Button
                                 variant="bordered"
-                                className="bg-slate-700/30 backdrop-blur-sm text-slate-300 border border-slate-600/50 hover:bg-slate-600/40 hover:border-slate-500/50 transition-all duration-300"
+                                className="w-full sm:w-auto bg-slate-700/30 backdrop-blur-sm text-slate-300 border border-slate-600/50 hover:bg-slate-600/40 hover:border-slate-500/50 transition-all duration-300"
                                 onPress={handlePrevQuestion}
                                 disabled={currentQuestionIndex === 0}
                             >
@@ -317,14 +398,14 @@ const StartQuizPage = () => {
                             </Button>
                             {currentQuestionIndex === quizDetail!.total_questions - 1 ? (
                                 <Button
-                                    className="bg-green-600/80 backdrop-blur-sm text-white font-semibold border border-green-500/50 hover:bg-green-500/80 hover:border-green-400/50 transition-all duration-300"
+                                    className="w-full sm:w-auto bg-green-600/80 backdrop-blur-sm text-white font-semibold border border-green-500/50 hover:bg-green-500/80 hover:border-green-400/50 transition-all duration-300"
                                     onPress={handleSubmitQuiz}
                                 >
                                     Kirim Jawaban <Send size={18}/>
                                 </Button>
                             ) : (
                                 <Button
-                                    className="bg-blue-600/80 backdrop-blur-sm text-white border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
+                                    className="w-full sm:w-auto bg-blue-600/80 backdrop-blur-sm text-white border border-blue-500/50 hover:bg-blue-500/80 hover:border-blue-400/50 transition-all duration-300"
                                     onPress={handleNextQuestion}
                                 >
                                     Selanjutnya <ChevronRight size={18}/>
@@ -354,7 +435,7 @@ const StartQuizPage = () => {
                             ? 'border-green-500/50 hover:border-green-400/50 shadow-lg shadow-green-500/20'
                             : 'border-red-500/50 hover:border-red-400/50 shadow-lg shadow-red-500/20'
                     }`}>
-                        <CardBody className="p-8 text-center">
+                        <CardBody className="p-6 sm:p-8 text-center">
                             {/* Icon and Status */}
                             <div className="mb-6">
                                 {isSuccess ? (
@@ -391,7 +472,7 @@ const StartQuizPage = () => {
                             </div>
 
                             {/* Title */}
-                            <h1 className="text-3xl font-bold mb-3 text-white">
+                            <h1 className="text-2xl sm:text-3xl font-bold mb-3 text-white">
                                 {isSuccess ? "Selamat! Kuis Berhasil!" : "Kuis Selesai"}
                             </h1>
 
@@ -407,7 +488,7 @@ const StartQuizPage = () => {
                                     : 'bg-red-700/20 border-red-600/30'
                             }`}>
                                 <p className="text-lg text-slate-300 mb-2">Skor Anda:</p>
-                                <p className={`text-5xl font-bold ${getScoreColor(score)}`}>
+                                <p className={`text-4xl sm:text-5xl font-bold ${getScoreColor(score)}`}>
                                     {Math.round(score)}
                                 </p>
                                 <div className="mt-2">
@@ -488,7 +569,8 @@ const StartQuizPage = () => {
     }
 
     return <>
-        <div className="min-h-screen text-white p-4 flex flex-col items-center justify-center bg-gray-900 relative overflow-hidden">
+        {/* Menggunakan padding-top untuk menghindari navbar yang fixed */}
+        <div className="min-h-screen text-white p-4 sm:p-6 md:p-8 pt-20 sm:pt-24 flex flex-col items-center justify-center bg-gray-900 relative overflow-hidden">
             {/* Background Elements */}
             <div className="absolute top-0 left-0 w-full h-full bg-black"></div>
             <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-sky-600/40 rounded-full filter blur-3xl opacity-50 animate-pulse"></div>

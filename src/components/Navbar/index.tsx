@@ -229,7 +229,7 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
                           )}
 
                           <Link
-                          href="/pembelian"
+                          href="/product/owned"
                           className="flex items-center px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
                           onClick={() => setIsDropdownOpen(false)}
                         >

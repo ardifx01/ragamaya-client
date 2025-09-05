@@ -130,9 +130,9 @@ const ProductImage: React.FC<ProductImageProps> = ({
                     transition={{ duration: 0.8 }}
                     className="space-y-6"
                 >
-                    <div className="group relative overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm">
+                    <div className="w-full aspect-[4/3] rounded-3xl border border-white/20 overflow-hidden">
                         <motion.div
-                            className="aspect-square cursor-zoom-in"
+                            className="cursor-zoom-in w-full h-full"
                             whileHover={{ scale: 1.02 }}
                             transition={{ duration: 0.4 }}
                             onClick={() => setIsImageZoomed(true)}
@@ -140,10 +140,10 @@ const ProductImage: React.FC<ProductImageProps> = ({
                             <Image
                                 src={product.thumbnails[selectedThumbnail]?.thumbnail_url}
                                 alt={`${product.name} - Motif ${selectedThumbnail + 1}`}
-                                className=" object-cover md:h-[610px]"
+                                className="w-full h-full object-cover"
                                 width={620}
+                                height={450}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </motion.div>
                     </div>
                     {product.thumbnails.length > 1 && (

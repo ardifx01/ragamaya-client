@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
       name: "access_token",
       value: newAccessToken,
       path: "/",
-      expires: new Date(Date.now() + 7 * 60 * 60 * 1000), 
+      expires: new Date(Date.now() + 7 * 60 * 60 * 1000),
     });
     return res;
   };
@@ -55,12 +55,27 @@ export async function middleware(request: NextRequest) {
     }
   };
 
+  const isSeller = (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.role === "seller";
+    } catch (error) {
+      redirectToLogin();
+      return false;
+    }
+  };
+
   const accessToken = request.cookies.get("access_token")?.value;
   const refreshToken = request.cookies.get("refresh_token")?.value;
 
   if (pathname.startsWith("/dashboard")) {
     if (!accessToken) {
       return refreshAccessToken();
+    } else {
+      if (!isSeller(accessToken)) {
+        const url = new URL("/", request.url);
+        return NextResponse.redirect(url);
+      }
     }
   } else {
     if (refreshToken && !accessToken) {

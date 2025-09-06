@@ -345,7 +345,7 @@ export default function MainNavbar({ navItems = [] }: MainNavbarProps) {
               <>
                 <div className="">
                   <Link
-                    href="/pembelian"
+                    href="/product/owned"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="text-gray-300 hover:text-white transition-colors duration-200 py-2 block text-md"
                   >

@@ -217,7 +217,7 @@ const OwnedProducts: React.FC<OwnedProductsProps> = ({ onLoadingChange }) => {
                                                                     />
                                                                 ))}
                                                             </div>
-                                                            <span className="text-sm font-medium text-gray-300 ml-1">4.5</span>
+                                                            <span className="text-sm font-medium text-gray-300 ml-1">4.8</span>
                                                         </div>
 
                                                         <div className="flex items-center gap-1 text-green-400" role="group">

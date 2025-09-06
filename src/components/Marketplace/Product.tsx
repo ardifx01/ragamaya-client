@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import RequestAPI from "@/helper/http";
 import { ProductGridSkeleton } from "./ProductSkeleton";
-import { Image, Link } from "@heroui/react";
+import { Image } from "@heroui/react";
 import { HoverBorderGradient } from "../ui/hover-border-gradient";
+import Link from "next/link";
 
 interface Thumbnail {
     thumbnail_url: string;
@@ -272,7 +273,7 @@ const Product: React.FC<ProductProps> = ({
                                                             </div>
                                                             <HoverBorderGradient
                                                                 containerClassName="rounded-xl"
-                                                                as="button"
+                                                                
                                                                 className="bg-black text-white flex items-center justify-center gap-2 px-4 py-3 font-semibold text-sm border border-white"
                                                                 aria-label="Beli produk sekarang"
                                                             >

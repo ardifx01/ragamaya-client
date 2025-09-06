@@ -53,7 +53,7 @@ const PaymentStatusBanner = ({ status }) => {
         )
     } else if (status === "settlement") {
         return (
-            <div className={`bg-gradient-to-tl from-blue-300 to-blue-400 w-full pb-10 pt-20 flex flex-col items-center justify-center`}>
+            <div className={`bg-gradient-to-r from-green-400 to-blue-500 w-full pb-10 pt-20 flex flex-col items-center justify-center`}>
                 <Player
                     src="/animations/success.json"
                     autoplay

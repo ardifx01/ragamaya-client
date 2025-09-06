@@ -234,13 +234,13 @@ export default function ArticleDetailPage() {
 
   return (
     <div className="min-h-screen pt-10">
-      <div className="max-w-7xl mx-auto p-4 pt-20">
+      <div className="max-w-7xl mx-auto pt-20 p-4">
         <motion.nav
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between mb-12"
         >
-          <div className="flex items-center bg-white/5 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/10">
+          <div className="flex items-center bg-white/5 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/10 w-70 md:w-100">
             <Link
               href="/education"
               className="flex items-center text-xs md:text-sm text-gray-300 hover:text-white transition-all duration-300 hover:scale-105"
@@ -248,7 +248,7 @@ export default function ArticleDetailPage() {
               <BookOpen size={18} className="mr-2" />
               Edukasi
             </Link>
-            <ChevronRight size={16} className="mx-3 text-gray-500" />
+            <ChevronRight className="mx-3 w-18 mt-0.5 text-gray-500" />
             <span className="text-white text-xs md:text-sm truncate max-w-48">
               {article.title}
             </span>

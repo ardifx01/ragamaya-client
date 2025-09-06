@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Copy, Package, Star, Upload, ShoppingCart, AlertCircle, Zap, Award, CreditCard, Download } from "lucide-react";
 import { Image, addToast } from "@heroui/react";
 import { motion } from 'framer-motion';
@@ -381,15 +381,15 @@ const PaymentDetailSection: React.FC<PaymentDetailSectionProps> = ({ data }) => 
                     <div className="space-y-3">
                         <div className="flex justify-between">
                             <span className="text-gray-400 text-sm md:text-base">Status Transaksi</span>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${(currentPayment?.transaction_status || data.status) === 'pending'
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${data.status === 'pending'
                                 ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
-                                : (currentPayment?.transaction_status || data.status) === 'settlement'
+                                : data.status === 'settlement'
                                     ? 'bg-green-500/20 text-green-300 border border-green-500/30'
-                                    : (currentPayment?.transaction_status || data.status) === 'expire'
+                                    : data.status === 'expire'
                                         ? 'bg-red-500/20 text-red-300 border border-red-500/30'
                                         : 'bg-gray-500/20 text-gray-300 border border-gray-500/30'
                                 }`}>
-                                {currentPayment?.transaction_status || data.status || 'N/A'}
+                                {data.status || 'N/A'}
                             </span>
                         </div>
                         <div className="flex justify-between">
@@ -401,7 +401,7 @@ const PaymentDetailSection: React.FC<PaymentDetailSectionProps> = ({ data }) => 
                     </div>
                 </div>
 
-                {((currentPayment?.transaction_status || data.status) === "pending") && (
+                {(data.status === "pending") && (
                     <div className="border-t border-white/10 pt-6">
                         <h4 className="text-lg font-semibold text-white mb-4 flex items-center">
                             <Zap size={20} className="mr-2 text-yellow-400" />
@@ -412,7 +412,7 @@ const PaymentDetailSection: React.FC<PaymentDetailSectionProps> = ({ data }) => 
                 )}
             </motion.div>
 
-            {((currentPayment?.transaction_status || data.status) === "settlement") && (
+            {(data.status === "settlement") && (
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -457,10 +457,13 @@ const PaymentDetailSection: React.FC<PaymentDetailSectionProps> = ({ data }) => 
                         </div>
                     )}
                 </motion.div>
-
             )}
+
             <motion.div
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border border-amber-400/20 flex items-start gap-4"
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                transition={{ delay: 0.6 }} 
+                className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 backdrop-blur-sm rounded-2xl p-6 border border-amber-400/20 flex items-start gap-4"
             >
                 <AlertCircle size={24} className="text-amber-400 flex-shrink-0 mt-0.5" />
                 <div>

@@ -452,7 +452,7 @@ const StartQuizPage = () => {
                 const score = quizResult?.score || 0;
 
                 return (
-                    <div className={`bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border transition-all duration-300 rounded-2xl text-white w-full max-w-2xl ${
+                    <div className={`bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-sm border transition-all duration-300 rounded-2xl text-white w-full max-w-2xl mt-20 ${
                         isSuccess
                             ? 'border-green-500/50 hover:border-green-400/50 shadow-lg shadow-green-500/20'
                             : 'border-red-500/50 hover:border-red-400/50 shadow-lg shadow-red-500/20'

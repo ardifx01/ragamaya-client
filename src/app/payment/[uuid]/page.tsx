@@ -22,6 +22,9 @@ const Page = () => {
     const [orderData, setOrderData] = useState(null);
     const [productData, setProductData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [sseRetryCount, setSseRetryCount] = useState(0);
+    const [pollingInterval, setPollingInterval] = useState(null);
+    const MAX_RETRY_COUNT = 3;
 
     const fetchData = async () => {
         try {
@@ -50,14 +53,74 @@ const Page = () => {
         }
     };
 
+    const checkPaymentStatus = async () => {
+        try {
+            console.log('Polling payment status...');
+            const orderResponse = await RequestAPI(`/order/${params.uuid}`, 'get');
+            const currentStatus = orderResponse.body.status;
+            
+            console.log('Polling result - status:', currentStatus);
+    
+            if (orderResponse.body?.product_uuid) {
+                const productResponse = await RequestAPI(`/product/${orderResponse.body.product_uuid}`, 'get');
+                setProductData(productResponse.body);
+                
+                setOrderData(prev => ({
+                    ...prev,
+                    ...orderResponse.body,
+                    product: productResponse.body
+                }));
+            } else {
+                setOrderData(orderResponse.body);
+            }
+
+            if (currentStatus === 'settlement' || currentStatus === 'expire') {
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    setPollingInterval(null);
+                    console.log('Polling stopped - status:', currentStatus);
+                }
+            }
+        } catch (error) {
+            console.error('Polling error:', error);
+        }
+    };
+
     const handleSSEInfo = (event) => {
         const data = JSON.parse(event.data);
+        console.log('SSE Data received:', data);
+        
         if (data.type === "info") {
-            setOrderData(prev => ({
-                ...prev,
-                ...data.body,
-                product: prev?.product || productData
-            }));
+            setOrderData(prev => {
+                let updatedPayments = prev?.payments || [];
+                
+                if (data.body.status && updatedPayments.length > 0) {
+                    updatedPayments = updatedPayments.map(payment => ({
+                        ...payment,
+                        transaction_status: data.body.status === 'settlement' ? 'settlement' : 
+                                          data.body.status === 'expire' ? 'expire' : 
+                                          payment.transaction_status
+                    }));
+                }
+
+                const updated = {
+                    ...prev,
+                    ...data.body,
+                    payments: updatedPayments,
+                    product: prev?.product || productData
+                };
+                
+                console.log('Order data updated via SSE:', updated);
+                console.log('New status:', updated.status);
+                
+                if ((updated.status === 'settlement' || updated.status === 'expire') && pollingInterval) {
+                    clearInterval(pollingInterval);
+                    setPollingInterval(null);
+                    console.log('Polling stopped due to SSE update');
+                }
+                
+                return updated;
+            });
         }
     };
 
@@ -66,15 +129,38 @@ const Page = () => {
             const eventSource = new EventSource(
                 BASE_API + `/order/stream?id=${params.uuid}&authorization=${Cookies.get('access_token')}`
             );
+            
+            eventSource.onopen = () => {
+                console.log("SSE connection opened");
+                setSseRetryCount(0);
+            };
+            
             eventSource.onmessage = (event) => {
                 handleSSEInfo(event);
             };
-            eventSource.onerror = () => {
-                console.log("SSE connection error");
+            
+            eventSource.onerror = (error) => {
+                console.log("SSE connection error:", error);
+                eventSource.close();
+                
+                if (sseRetryCount < MAX_RETRY_COUNT) {
+                    setTimeout(() => {
+                        console.log(`Retrying SSE connection (${sseRetryCount + 1}/${MAX_RETRY_COUNT})`);
+                        setSseRetryCount(prev => prev + 1);
+                        streamInfo();
+                    }, 2000 * (sseRetryCount + 1));
+                } else {
+                    console.log("Max SSE retry count reached, using polling only");
+                    if (!pollingInterval) {
+                        const interval = setInterval(checkPaymentStatus, 5000);
+                        setPollingInterval(interval);
+                    }
+                }
             };
+            
             return eventSource;
         } catch (err) {
-            console.error(err);
+            console.error("Failed to create SSE connection:", err);
             return null;
         }
     };
@@ -88,10 +174,26 @@ const Page = () => {
         fetchData();
         const eventSource = streamInfo();
 
+        const startPolling = () => {
+            if (!pollingInterval) {
+                const interval = setInterval(checkPaymentStatus, 10000); // Every 10 seconds
+                setPollingInterval(interval);
+                console.log('Polling started as safety measure');
+            }
+        };
+
+        const pollingTimeout = setTimeout(startPolling, 3000);
+
         return () => {
             if (eventSource) {
                 eventSource.close();
                 console.log("SSE disconnected");
+            }
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+            if (pollingTimeout) {
+                clearTimeout(pollingTimeout);
             }
         };
     }, [params.uuid, isLoggedIn]);
@@ -139,7 +241,7 @@ const Page = () => {
                         >
                             <PaymentProgressBar status={orderData.status} />
                         </motion.div>
-                        {(orderData.transaction_status === "pending" || orderData.status === "pending") && orderData.expiry_time && (
+                        {(orderData.status === "pending") && orderData.expiry_time && (
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}

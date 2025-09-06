@@ -15,7 +15,7 @@ import MyModal from "@/components/ui/modal/MyModal";
 import AddProductModal from "@/components/Dashboard/product/AddModal";
 import {GetUserData} from "@/lib/GetUserData";
 import EditProductModal from "@/components/Dashboard/product/EditModal";
-import product from "@/components/Marketplace/product";
+import product from "@/components/Marketplace/product2";
 
 // --- PENYESUAIAN INTERFACE ---
 interface Thumbnail { thumbnail_url: string; }
@@ -320,13 +320,13 @@ const ProductTable: React.FC = () => {
                         {/* --- PENYESUAIAN: Tombol disable berdasarkan currentPage dan totalPages --- */}
                         <div className="flex items-center gap-2">
                             <Button size="sm" isIconOnly variant="solid" onPress={handlePrevious} disabled={currentPage <= 1 || loading}>
-                                <ChevronLeft className="text-gray-700" />
+                                <ChevronLeft className="text-white" />
                             </Button>
                             <span className="text-sm font-medium text-zinc-400">
                                 {currentPage}
                              </span>
                             <Button size="sm" isIconOnly onPress={handleNext} disabled={currentPage >= totalPages || loading}>
-                                <ChevronRight className="text-gray-700" />
+                                <ChevronRight className="text-white" />
                             </Button>
                         </div>
                     </div>

@@ -108,7 +108,7 @@ const OwnedProducts: React.FC<OwnedProductsProps> = ({ onLoadingChange }) => {
                         <p className="text-gray-400 text-lg max-w-md mx-auto leading-relaxed mb-8">
                             Anda belum memiliki produk apapun. Mulai jelajahi koleksi batik digital kami untuk menambah ke library Anda.
                         </p>
-                        <Link href="/products">
+                        <Link href="/marketplace">
                             <HoverBorderGradient
                                 containerClassName="rounded-xl"
                                 as="button"

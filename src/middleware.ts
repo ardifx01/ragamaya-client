@@ -37,6 +37,7 @@ export async function middleware(request: NextRequest) {
       name: "access_token",
       value: newAccessToken,
       path: "/",
+      expires: new Date(Date.now() + 7 * 60 * 60 * 1000), 
     });
     return res;
   };

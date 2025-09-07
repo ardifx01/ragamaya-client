@@ -229,7 +229,7 @@ const Page = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="flex items-center mb-8"
                     >
-                        <div className="flex items-center bg-white/5 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10">
+                        <div className="flex items-center bg-white/5 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/10 w-96 md:w-100">
                             <Link
                                 href="/"
                                 className="flex items-center text-sm text-gray-300 hover:text-white transition-all duration-300 hover:scale-105"
